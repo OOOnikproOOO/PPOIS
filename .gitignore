@@ -1,0 +1,24 @@
+Игнорируем папку сборки CMake
+
+build/
+
+Игнорируем скомпилированные исполняемые файлы
+
+*.exe
+*.dll
+*.so
+*.o
+*.obj
+
+Игнорируем файлы настроек IDE
+
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+
+Игнорируем кэш CMake
+
+CMakeCache.txt
+CMakeFiles/
