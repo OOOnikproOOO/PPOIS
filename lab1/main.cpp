@@ -4,13 +4,16 @@
 using namespace std;
 
 int main() {
-    Set The_Set;
+    Set TheSet;
 
-    cout << "Is set empty? " << (The_Set.IsEmpty() ? "Yes" : "No") << endl;
-    cout << "Adding \"apple\". Is it successful? " << (The_Set.Add("apple") ? "Yes" : "No") << endl;
-    cout << "Adding \"orange\" Is it successful? " << (The_Set.Add("orange") ? "Yes" : "No") << endl;
-    cout << "Adding \"apple\" again. Is it successful? " << (The_Set.Add("apple") ? "Yes" : "No") << endl;
-    cout << "The number of elements in set is " << The_Set.Size() << endl;
+    cout << "Is set empty? " << (TheSet.IsEmpty() ? "Yes" : "No") << endl;
+    cout << "Adding \"apple\". Is it successful? " << (TheSet.Add("apple") ? "Yes" : "No") << endl;
+    cout << "Adding \"orange\" Is it successful? " << (TheSet.Add("orange") ? "Yes" : "No") << endl;
+    cout << "Adding \"banana\". Is it successful? " << (TheSet.Add("banana") ? "Yes" : "No") << endl;
+    cout << "Adding \"apple\" again. Is it successful? " << (TheSet.Add("apple") ? "Yes" : "No") << endl;
+    cout << "The number of elements in set is " << TheSet.Size() << endl;
+    cout << "Deleting \"orange\". Is it successful? " << (TheSet.Delete("orange") ? "Yes" : "No") << endl;
+    cout << "The number of elements in set is " << TheSet.Size() << endl;
 
     return 0;
 }
