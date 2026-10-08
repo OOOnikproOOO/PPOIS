@@ -4,8 +4,21 @@ Set::Set() {
 
 }
 
+Set::Set(const Set& other) {
+    this->elements_ = other.elements_;
+    this->set_elements_ = other.set_elements_;
+}
+
 Set::~Set() {
 
+}
+
+Set& Set::operator=(const Set& other) {
+    if (this != &other) {
+        this->elements_ = other.elements_;
+        this->set_elements_ = other.set_elements_;
+    }
+    return *this;
 }
 
 void Set::FormSetFromString(const std::string& str, bool form_or_add) {
@@ -142,9 +155,9 @@ bool Set::Delete(const Set& subset) {
     return false;
 }
 
-std::string Set::PrintSet() {
+std::string Set::PrintedSet() const {
     std::string result = "{ ";
-    bool first = true; // Флажок, чтобы не ставить запятую перед первым элементом
+    bool first = true; // Флаг, чтобы не ставить запятую перед первым элементом
 
     for (unsigned int i = 0; i < elements_.size(); i++) {
         if (!first)
@@ -157,10 +170,83 @@ std::string Set::PrintSet() {
         if (!first) {
             result += ", ";
         }
-        result += set_elements_[i].PrintSet();
+        result += set_elements_[i].PrintedSet();
         first = false;
     }
 
     result += " }";
     return result;
 }
+
+Set Set::Union(const Set& other) const {
+    Set result(*this);
+    for (unsigned int i = 0; i < other.elements_.size(); i++)
+        result.Add(other.elements_[i]);
+
+    for (unsigned int i = 0; i < other.set_elements_.size(); i++)
+        result.Add(other.set_elements_[i]);
+
+    return result;
+}
+
+Set Set::Intersection(const Set& other) const {
+    Set result;
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (other.Contains(elements_[i])) {
+            result.Add(elements_[i]);
+        }
+    }
+
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (other.Contains(set_elements_[i])) {
+            result.Add(set_elements_[i]);
+        }
+    }
+
+    return result;
+}
+
+Set Set::Difference(const Set& other) const {
+    Set result;
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (!(other.Contains(elements_[i])))
+            result.Add(elements_[i]);
+    }
+
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (!(other.Contains(set_elements_[i])))
+            result.Add(set_elements_[i]);
+    }
+
+    return result;
+}
+
+Set Set::Boolean() const {
+    Set result;
+    Set empty_set;
+
+    result.Add(empty_set);
+
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        unsigned int the_size = result.set_elements_.size(); // Фиксирование числа подмножеств выходного множества, куда будет ложиться элемент
+
+        for (unsigned int j = 0; j < the_size; j++) {
+            Set new_subset = result.set_elements_[j];
+            new_subset.Add(elements_[i]);
+            result.Add(new_subset);
+        }
+    }
+
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        unsigned int the_size = result.set_elements_.size();
+
+        for (unsigned int j = 0; j < the_size; j++) {
+            Set new_subset = result.set_elements_[j];
+            new_subset.Add(set_elements_[i]);
+            result.Add(new_subset);
+        }
+    }
+
+    return result;
+}
+

@@ -5,7 +5,7 @@ using namespace std;
 
 short Menu();
 
-int main() { // Используется одно множество, над которым будут проводиться действия? // Дополнительные функции (меню и др.) тоже в заголовочный файл? // Выводить само множество и его элементы?
+int main() { // Исправление ошибки в методе Difference, добавление оператора присваивания, реализация метода Intersection, добавление Doxygen-комментариев для класса Set, внесение поправок в код main.cpp и добавление новых опций пользовательского меню
     Set the_set;
     string form_string = "";
 
@@ -38,7 +38,7 @@ int main() { // Используется одно множество, над к�
             cout << "\n";
             if (form_string[0] == '{') {
                 Set subset;
-                subset.FormSetFromString(form_string, 0);
+                subset.FormSetFromString(form_string, 1);
                 if (the_set.Add(subset))
                     cout << "The element was successfully added!\n\n";
                 else cout << "The element wasn't added! It is already contained!\n\n";
@@ -56,7 +56,7 @@ int main() { // Используется одно множество, над к�
             cout << "\n";
             if (form_string[0] == '{') {
                 Set subset;
-                subset.FormSetFromString(form_string, 0);
+                subset.FormSetFromString(form_string, 1);
                 if (the_set.Delete(subset))
                     cout << "The element was successfully deleted!\n\n";
                 else cout << "The element wasn't deleted! It isn't contained!\n\n";
@@ -74,7 +74,7 @@ int main() { // Используется одно множество, над к�
             cout << "\n";
             if (form_string[0] == '{') {
                 Set subset;
-                subset.FormSetFromString(form_string, 0);
+                subset.FormSetFromString(form_string, 1);
                 if (the_set.Contains(subset))
                     cout << "The element is included!\n\n";
                 else cout << "The element isn't included!\n\n";
@@ -86,10 +86,58 @@ int main() { // Используется одно множество, над к�
             form_string = "";
             break;
 
-        //...
+        case 7:
+        {
+            cout << "Enter a set to unite with: ";
+            getline(cin, form_string);
+            cout << "\n";
+            Set other;
+            other.FormSetFromString(form_string, 1);
+            Set result = the_set.Union(other);
+            string string_result = result.PrintedSet();
+            cout << "The union of the sets is " << string_result << "\n\n";
+            form_string = "";
+            break;
+        }
+
+        case 8:
+        {
+            cout << "Enter a set to intersect with: ";
+            getline(cin, form_string);
+            cout << "\n";
+            Set other;
+            other.FormSetFromString(form_string, 1);
+            Set result = the_set.Intersection(other);
+            string string_result = result.PrintedSet();
+            cout << "The intersection of the sets is " << string_result << "\n\n";
+            form_string = "";
+            break;
+        }
+           
+        case 9:
+        {
+            cout << "Enter a set for the difference: ";
+            getline(cin, form_string);
+            cout << "\n";
+            Set other;
+            other.FormSetFromString(form_string, 1);
+            Set result = the_set.Difference(other);
+            string string_result = result.PrintedSet();
+            cout << "The difference of the sets is " << string_result << "\n\n";
+            form_string = "";
+            break;
+        }
+
+        case 10:
+        {
+            Set result = the_set.Boolean();
+            string string_result = result.PrintedSet();
+            cout << "The boolean of the set is " << string_result << "\n\n";
+            break;
+        }
 
         case 11:
-            cout << the_set.PrintSet() << "\n\n";
+            cout << "The set is " << the_set.PrintedSet() << "\n\n";
             break;
 
         case 12:
@@ -103,11 +151,11 @@ int main() { // Используется одно множество, над к�
 
 short Menu() {
     short choice;
-    for (int i = 0; i < 47; i++) printf("-");
+    for (unsigned int i = 0; i < 47; i++) printf("-");
     printf("\n|%-20sMENU%-21s|\n", "", "");
-    for (int i = 0; i < 47; i++) printf("-");
-    printf("\n| 1 - Create a set from a string%-14s|\n| 2 - Check for an empty set%-18s|\n| 3 - Determine the cardinality of a set%-6s|\n| 4 - Add an element%-26s|\n| 5 - Delete an element%-23s|\n| 6 - Check if an element belongs to a set%-4s|\n| 7 - Union of two sets%-23s|\n| 8 - Intersection of two sets%-16s|\n| 9 - Difference of two sets%-18s|\n| 10 - Construction of the power set of a set |\n| 11 - Print a set%-28s|\n| 12 - Exit%-35s|\n", "", "", "", "", "", "", "", "", "", "", "");
-    for (int i = 0; i < 47; i++) printf("-");
+    for (unsigned int i = 0; i < 47; i++) printf("-");
+    printf("\n| 1 - Create a set from a string%-14s|\n| 2 - Check for an empty set%-18s|\n| 3 - Determine the cardinality of a set%-6s|\n| 4 - Add an element%-26s|\n| 5 - Delete an element%-23s|\n| 6 - Check if an element belongs to a set%-4s|\n| 7 - Union of two sets%-23s|\n| 8 - Intersection of two sets%-16s|\n| 9 - Difference of two sets%-18s|\n| 10 - Boolean of a set%-23s|\n| 11 - Print the set%-26s|\n| 12 - Exit%-35s|\n", "", "", "", "", "", "", "", "", "", "", "", "");
+    for (unsigned int i = 0; i < 47; i++) printf("-");
     cout << "\nSelected: ";
     cin >> choice;
     cout << endl;
