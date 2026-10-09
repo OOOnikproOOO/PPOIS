@@ -5,7 +5,7 @@ using namespace std;
 
 short Menu();
 
-int main() { // Исправление ошибки в методе Difference, добавление оператора присваивания, реализация метода Intersection, добавление Doxygen-комментариев для класса Set, внесение поправок в код main.cpp и добавление новых опций пользовательского меню
+int main() {
     Set the_set;
     string form_string = "";
 
