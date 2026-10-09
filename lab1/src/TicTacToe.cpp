@@ -1,3 +1,10 @@
+/**
+ * @file TicTacToe.cpp
+ * @brief Реализация методов класса TicTacToe ("Крестики-нолики").
+ * @author Nikita Momot
+ * @date 2026
+ */
+
 #include <iostream>
 #include "TicTacToe.h"
 
@@ -5,16 +12,43 @@ TicTacToe::TicTacToe(unsigned int size) : size_(size), active_player_('X'), move
     board_.assign(size_, std::vector<char>(size_, ' '));
 }
 
-bool TicTacToe::IsValidMove(unsigned int row, unsigned int column) const {
-    if (row >= size_ || column >= size_) {
-        std::cout << "Error! Out of board bounds!\n";
-        return false;
-    }
+bool TicTacToe::operator==(const TicTacToe& other) const {
+    return (size_ == other.size_ && active_player_ == other.active_player_ && moves_ == other.moves_ && board_ == other.board_);
+}
 
-    if (board_[row][column] != ' ') {
-        std::cout << "Error! The cell is occupied!\n";
-        return false;
+bool TicTacToe::operator!=(const TicTacToe& other) const {
+    return !(*this == other);
+}
+
+std::ostream& operator<<(std::ostream& os, const TicTacToe& game) {
+    os << "\n";
+    for (unsigned int i = 0; i < game.size_; i++) {
+        os << "|";
+        for (unsigned int j = 0; j < game.size_; j++) {
+            os << game.board_[i][j] << "|";
+        }
+        os << "\n";
     }
+    os << "\n";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, TicTacToe& game) {
+    unsigned int new_size;
+    if (is >> new_size) {
+        if (new_size < 3) 
+            new_size = 3;
+        game = TicTacToe(new_size);
+    }
+    return is;
+}
+
+bool TicTacToe::IsValidMove(unsigned int row, unsigned int column) const {
+    if (row >= size_ || column >= size_)
+        return false;
+
+    if (board_[row][column] != ' ')
+        return false;
 
     return true;
 }

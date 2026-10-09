@@ -1,3 +1,10 @@
+/**
+ * @file Set.cpp
+ * @brief Реализация методов класса Set ("Неориентированное канторовское множество").
+ * @author Nikita Momot
+ * @date 2026
+ */
+
 #include "Set.h"
 
 Set::Set() {
@@ -7,10 +14,6 @@ Set::Set() {
 Set::Set(const Set& other) {
     this->elements_ = other.elements_;
     this->set_elements_ = other.set_elements_;
-}
-
-Set::~Set() {
-
 }
 
 Set& Set::operator=(const Set& other) {
@@ -31,10 +34,16 @@ bool Set::operator[](const std::string& element) const {
 
 bool Set::operator[](const Set& subset) const {
     for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (set_elements_[i].IsEqual(subset))
+        if (set_elements_[i] == subset)
             return true;
     }
     return false;
+}
+
+Set Set::operator+(const Set& other) const {
+    Set result(*this);
+    result += other;
+    return result;
 }
 
 Set& Set::operator+=(const Set& other) {
@@ -45,12 +54,6 @@ Set& Set::operator+=(const Set& other) {
         this->Add(other.set_elements_[i]);
 
     return *this;
-}
-
-Set Set::operator+(const Set& other) const {
-    Set result(*this);
-    result += other;
-    return result;
 }
 
 Set Set::operator*(const Set& other) const {
@@ -96,6 +99,26 @@ Set& Set::operator-=(const Set& other) {
     return *this;
 }
 
+bool Set::operator==(const Set& other) const {
+    if ((elements_.size() != other.elements_.size()) || (set_elements_.size() != other.set_elements_.size()))
+        return false;
+
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (!other[elements_[i]])
+            return false;
+    }
+
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (!other[set_elements_[i]])
+            return false;
+    }
+    return true;
+}
+
+bool Set::operator!=(const Set& other) const {
+    return !(*this == other);
+}
+
 void Set::FormSetFromString(const std::string& str, bool form_or_add) {
     if (form_or_add) {
         elements_.clear();
@@ -108,6 +131,111 @@ void Set::FormSetFromString(const std::string& str, bool form_or_add) {
 
     if (position < str.length() && str[position] == '{')
         *this = Recursive(str, position);
+}
+
+bool Set::IsEmpty() const {
+    if (elements_.empty() && set_elements_.empty())
+        return true;
+    else return false;
+}
+
+unsigned int Set::Size() const {
+    return elements_.size() + set_elements_.size();
+}
+
+bool Set::Add(const std::string& element) {
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (elements_[i] == element)
+            return false;
+    }
+    elements_.push_back(element);
+    return true;
+}
+
+bool Set::Delete(const std::string& element) {
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (elements_[i] == element)
+        {
+            elements_.erase(elements_.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Set::Add(const Set& subset) {
+    if ((*this)[subset])
+        return false;
+    set_elements_.push_back(subset);
+    return true;
+}
+
+bool Set::Delete(const Set& subset) {
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (set_elements_[i] == subset) {
+            set_elements_.erase(set_elements_.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
+std::ostream& operator<<(std::ostream& os, const Set& the_set) {
+    os << "{ ";
+    bool first = true;
+
+    for (unsigned int i = 0; i < the_set.elements_.size(); i++) {
+        if (!first) 
+            os << ", ";
+        os << the_set.elements_[i];
+        first = false;
+    }
+
+    for (unsigned int i = 0; i < the_set.set_elements_.size(); i++) {
+        if (!first) 
+            os << ", ";
+        os << the_set.set_elements_[i];
+        first = false;
+    }
+
+    os << " }";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Set& the_set) {
+    std::string input;
+    std::getline(is, input);
+    the_set.FormSetFromString(input, 1);
+    return is;
+}
+
+Set Set::Boolean() const {
+    Set result;
+    Set empty_set;
+
+    result.Add(empty_set);
+
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        unsigned int the_size = result.set_elements_.size(); // Фиксирование числа подмножеств выходного множества, куда будет ложиться элемент
+
+        for (unsigned int j = 0; j < the_size; j++) {
+            Set new_subset = result.set_elements_[j];
+            new_subset.Add(elements_[i]);
+            result.Add(new_subset);
+        }
+    }
+
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        unsigned int the_size = result.set_elements_.size();
+
+        for (unsigned int j = 0; j < the_size; j++) {
+            Set new_subset = result.set_elements_[j];
+            new_subset.Add(set_elements_[i]);
+            result.Add(new_subset);
+        }
+    }
+
+    return result;
 }
 
 Set Set::Recursive(const std::string& str, unsigned int& position) {
@@ -150,119 +278,3 @@ Set Set::Recursive(const std::string& str, unsigned int& position) {
 
     return the_set;
 }
-
-bool Set::IsEmpty() const {
-    if (elements_.empty() && set_elements_.empty())
-        return true;
-    else return false;
-}
-
-unsigned int Set::Size() const {
-    return elements_.size() + set_elements_.size();
-}
-
-bool Set::Add(const std::string& element) {
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (elements_[i] == element)
-            return false;
-    }
-    elements_.push_back(element);
-    return true;
-}
-
-bool Set::Delete(const std::string& element) {
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (elements_[i] == element)
-        {
-            elements_.erase(elements_.begin() + i);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Set::IsEqual(const Set& other) const {
-    if ((elements_.size() != other.elements_.size()) || (set_elements_.size() != other.set_elements_.size())) 
-        return false;
-
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (!other[elements_[i]]) 
-            return false;
-    }
-
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (!other[set_elements_[i]])
-            return false;
-    }
-    return true;
-}
-
-bool Set::Add(const Set& subset) {
-    if ((*this)[subset])
-        return false;
-    set_elements_.push_back(subset);
-    return true;
-}
-
-bool Set::Delete(const Set& subset) {
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (set_elements_[i].IsEqual(subset)) {
-            set_elements_.erase(set_elements_.begin() + i);
-            return true;
-        }
-    }
-    return false;
-}
-
-std::string Set::PrintedSet() const {
-    std::string result = "{ ";
-    bool first = true; // Флаг, чтобы не ставить запятую перед первым элементом
-
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (!first)
-            result += ", ";
-        result += elements_[i];
-        first = false;
-    }
-
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (!first) {
-            result += ", ";
-        }
-        result += set_elements_[i].PrintedSet();
-        first = false;
-    }
-
-    result += " }";
-    return result;
-}
-
-Set Set::Boolean() const {
-    Set result;
-    Set empty_set;
-
-    result.Add(empty_set);
-
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        unsigned int the_size = result.set_elements_.size(); // Фиксирование числа подмножеств выходного множества, куда будет ложиться элемент
-
-        for (unsigned int j = 0; j < the_size; j++) {
-            Set new_subset = result.set_elements_[j];
-            new_subset.Add(elements_[i]);
-            result.Add(new_subset);
-        }
-    }
-
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        unsigned int the_size = result.set_elements_.size();
-
-        for (unsigned int j = 0; j < the_size; j++) {
-            Set new_subset = result.set_elements_[j];
-            new_subset.Add(set_elements_[i]);
-            result.Add(new_subset);
-        }
-    }
-
-    return result;
-}
-

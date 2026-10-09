@@ -9,17 +9,49 @@
 #define TICTACTOE_H
 
 #include <vector>
+#include <iostream>
 
  /**
   * @brief Класс, реализующий логику игры "Крестики-нолики".
   */
 class TicTacToe {
 public:
+
     /**
      * @brief Конструктор игры.
      * @param size Размер игрового поля, по умолчанию - 3.
      */
     explicit TicTacToe(unsigned int size = 3);
+
+    /**
+     * @brief Перегрузка оператора == для проверки игр на равенство.
+     * @param other Вторая игра для сравнения.
+     * @return true, если состояния полей, активный игрок и количество ходов совпадают, иначе false.
+     */
+    bool operator==(const TicTacToe& other) const;
+
+    /**
+     * @brief Перегрузка оператора != для проверки игр на неравенство.
+     * @param other Вторая игра для сравнения.
+     * @return true, если игры различаются, иначе false.
+     */
+    bool operator!=(const TicTacToe& other) const;
+
+    /**
+     * @brief Перегрузка оператора << для вывода игрового поля.
+     * @param os Поток вывода.
+     * @param game Объект игры.
+     * @return Ссылка на поток вывода.
+     */
+    friend std::ostream& operator<<(std::ostream& os, const TicTacToe& game);
+
+    /**
+     * @brief Перегрузка оператора >> для инициализации поля.
+     * @param is Поток ввода.
+     * @param game Объект игры, который будет инициализирован.
+     * @return Ссылка на поток ввода.
+     */
+    friend std::istream& operator>>(std::istream& is, TicTacToe& game);
 
     /**
      * @brief Проверяет возможность установки символа в указанную клетку игрового поля.

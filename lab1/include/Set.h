@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
  /**
   * @brief Класс, представляющий неориентированное канторовское множество.
@@ -17,6 +18,7 @@
   */
 class Set {
 public:
+
     /**
      * @brief Конструктор по умолчанию. Создает пустое множество.
      */
@@ -27,11 +29,6 @@ public:
      * @param other Исходное множество для копирования.
      */
     Set(const Set& other);
-
-    /**
-     * @brief Деструктор по умолчанию.
-     */
-    ~Set();
 
     /**
      * @brief Оператор присваивания копированием.
@@ -97,6 +94,20 @@ public:
     Set& operator-=(const Set& other);
 
     /**
+     * @brief Перегрузка оператора == для проверки множеств на равенство.
+     * @param other Второе множество для сравнения.
+     * @return true, если множества идентичны по составу элементов, иначе false.
+     */
+    bool operator==(const Set& other) const;
+
+    /**
+     * @brief Перегрузка оператора != для проверки множеств на неравенство.
+     * @param other Второе множество для сравнения.
+     * @return true, если множества различаются, иначе false.
+     */
+    bool operator!=(const Set& other) const;
+
+    /**
      * @brief Формирует множество из строки или добавляет элементы из строки в данное множество.
      * @param str Строка, задающая множество.
      * @param form_or_add Флаг, для которого true значит очистить данное множество перед формированием, а false — добавить к уже существующему.
@@ -141,20 +152,29 @@ public:
      * @param subset Подмножество для удаления.
      * @return true, если подмножество успешно удалено, false — если подмножество не найдено.
      */
-    bool Delete(const Set& subset);
-    
-    /**
-     * @brief Формирует строковое представление множества для вывода.
-     * @return Строка в формате "{ a, b, { c } }".
-     */
-    std::string PrintedSet() const;
-    
+    bool Delete(const Set& subset);    
     
     /**
      * @brief Строит булеан данного множества.
      * @return Новое множество, элементами которого являются все возможные подмножества данного множества.
      */
     Set Boolean() const;
+
+    /**
+     * @brief Перегрузка оператора << для вывода множества.
+     * @param os Поток вывода.
+     * @param the_set Множество для вывода.
+     * @return Ссылка на поток вывода.
+     */
+    friend std::ostream& operator<<(std::ostream& os, const Set& the_set);
+
+    /**
+     * @brief Перегрузка оператора >> для чтения множества.
+     * @param is Поток ввода.
+     * @param the_set Множество, в которое будет записан результат.
+     * @return Ссылка на поток ввода.
+     */
+    friend std::istream& operator>>(std::istream& is, Set& the_set);
 
 private:
     /**
@@ -174,13 +194,6 @@ private:
      * @return Сформированное подмножество.
      */
     Set Recursive(const std::string& str, unsigned int& position);
-    
-    /**
-     * @brief Выполняет сравнение на равенство данного множества с другим.
-     * @param other Второе множество для сравнения.
-     * @return true, если множества идентичны по составу элементов.
-     */
-    bool IsEqual(const Set& other) const;
 };
 
 #endif
