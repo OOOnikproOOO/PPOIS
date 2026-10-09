@@ -21,6 +21,81 @@ Set& Set::operator=(const Set& other) {
     return *this;
 }
 
+bool Set::operator[](const std::string& element) const {
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (elements_[i] == element)
+            return true;
+    }
+    return false;
+}
+
+bool Set::operator[](const Set& subset) const {
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (set_elements_[i].IsEqual(subset))
+            return true;
+    }
+    return false;
+}
+
+Set& Set::operator+=(const Set& other) {
+    for (unsigned int i = 0; i < other.elements_.size(); i++)
+        this->Add(other.elements_[i]);
+
+    for (unsigned int i = 0; i < other.set_elements_.size(); i++)
+        this->Add(other.set_elements_[i]);
+
+    return *this;
+}
+
+Set Set::operator+(const Set& other) const {
+    Set result(*this);
+    result += other;
+    return result;
+}
+
+Set Set::operator*(const Set& other) const {
+    Set result;
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (other[elements_[i]]) {
+            result.Add(elements_[i]);
+        }
+    }
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (other[set_elements_[i]]) {
+            result.Add(set_elements_[i]);
+        }
+    }
+    return result;
+}
+
+Set& Set::operator*=(const Set& other) {
+    *this = *this * other;
+    return *this;
+}
+
+Set Set::operator-(const Set& other) const {
+    Set result;
+    for (unsigned int i = 0; i < elements_.size(); i++) {
+        if (!(other[elements_[i]]))
+            result.Add(elements_[i]);
+    }
+    for (unsigned int i = 0; i < set_elements_.size(); i++) {
+        if (!(other[set_elements_[i]]))
+            result.Add(set_elements_[i]);
+    }
+    return result;
+}
+
+Set& Set::operator-=(const Set& other) {
+    for (unsigned int i = 0; i < other.elements_.size(); i++)
+        this->Delete(other.elements_[i]);
+
+    for (unsigned int i = 0; i < other.set_elements_.size(); i++)
+        this->Delete(other.set_elements_[i]);
+
+    return *this;
+}
+
 void Set::FormSetFromString(const std::string& str, bool form_or_add) {
     if (form_or_add) {
         elements_.clear();
@@ -106,40 +181,24 @@ bool Set::Delete(const std::string& element) {
     return false;
 }
 
-bool Set::Contains(const std::string& element) const {
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (elements_[i] == element)
-            return true;
-    }
-    return false;
-}
-
-bool Set::Contains(const Set& subset) const {
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (set_elements_[i].IsEqual(subset)) 
-            return true;
-    }
-    return false;
-}
-
 bool Set::IsEqual(const Set& other) const {
     if ((elements_.size() != other.elements_.size()) || (set_elements_.size() != other.set_elements_.size())) 
         return false;
 
     for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (!other.Contains(elements_[i])) 
+        if (!other[elements_[i]]) 
             return false;
     }
 
     for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (!other.Contains(set_elements_[i]))
+        if (!other[set_elements_[i]])
             return false;
     }
     return true;
 }
 
 bool Set::Add(const Set& subset) {
-    if (this->Contains(subset))
+    if ((*this)[subset])
         return false;
     set_elements_.push_back(subset);
     return true;
@@ -175,49 +234,6 @@ std::string Set::PrintedSet() const {
     }
 
     result += " }";
-    return result;
-}
-
-Set Set::Union(const Set& other) const {
-    Set result(*this);
-    for (unsigned int i = 0; i < other.elements_.size(); i++)
-        result.Add(other.elements_[i]);
-
-    for (unsigned int i = 0; i < other.set_elements_.size(); i++)
-        result.Add(other.set_elements_[i]);
-
-    return result;
-}
-
-Set Set::Intersection(const Set& other) const {
-    Set result;
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (other.Contains(elements_[i])) {
-            result.Add(elements_[i]);
-        }
-    }
-
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (other.Contains(set_elements_[i])) {
-            result.Add(set_elements_[i]);
-        }
-    }
-
-    return result;
-}
-
-Set Set::Difference(const Set& other) const {
-    Set result;
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        if (!(other.Contains(elements_[i])))
-            result.Add(elements_[i]);
-    }
-
-    for (unsigned int i = 0; i < set_elements_.size(); i++) {
-        if (!(other.Contains(set_elements_[i])))
-            result.Add(set_elements_[i]);
-    }
-
     return result;
 }
 

@@ -4,4 +4,4 @@ project(PPOIS_lab1)
 
 include_directories(include)
 
-add_executable(Lab1_Run app/main.cpp src/Set.cpp)
+add_executable(Lab1_Run app/main.cpp src/Set.cpp src/TicTacToe.cpp)

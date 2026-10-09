@@ -1,35 +1,38 @@
+#include <iostream>
 #include "TicTacToe.h"
 
 TicTacToe::TicTacToe(unsigned int size) : size_(size), active_player_('X'), moves_(0) {
     board_.assign(size_, std::vector<char>(size_, ' '));
 }
 
-bool TicTacToe::MakeMove(unsigned int row, unsigned int column) {
-
+bool TicTacToe::IsValidMove(unsigned int row, unsigned int column) const {
     if (row >= size_ || column >= size_) {
         std::cout << "Error! Out of board bounds!\n";
         return false;
     }
 
     if (board_[row][column] != ' ') {
-        std::cout << "Error! Error! The cell is occupied!\n";
+        std::cout << "Error! The cell is occupied!\n";
         return false;
     }
-
-    board_[row][column] = active_player_;
-    moves_++;
-
-    if (active_player_ == 'X') {
-        active_player_ = 'O';
-    }
-    else
-        active_player_ = 'X';
 
     return true;
 }
 
 const std::vector<char>& TicTacToe::operator[](unsigned int index) const {
     return board_.at(index);
+}
+
+std::vector<char>& TicTacToe::operator[](unsigned int index) {
+    return board_.at(index);
+}
+
+void TicTacToe::SwitchPlayer() {
+    moves_++;
+    if (active_player_ == 'X')
+        active_player_ = 'O';
+    else
+        active_player_ = 'X';
 }
 
 char TicTacToe::CheckWin() const {
