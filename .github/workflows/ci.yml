@@ -40,9 +40,9 @@ jobs:
         run: ./lab1/build/Tests_Run
 
       - name: Check coverage (>= 90% lines)
-        working-directory: lab1
         run: |
-          gcovr --root . \
+          gcovr --root lab1 \
+                --object-directory lab1/build \
                 --filter "src/.*" \
                 --print-summary \
                 --fail-under-line 90
