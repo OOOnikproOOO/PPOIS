@@ -129,8 +129,13 @@ void Set::FormSetFromString(const std::string& str, bool form_or_add) {
     while (position < str.length() && str[position] != '{')
         position++;
 
-    if (position < str.length() && str[position] == '{')
-        *this = Recursive(str, position);
+    if (position < str.length() && str[position] == '{') {
+        Set temp_set = Recursive(str, position);
+        if (form_or_add)
+            *this = temp_set;
+        else
+            *this += temp_set;
+    }
 }
 
 bool Set::IsEmpty() const {
