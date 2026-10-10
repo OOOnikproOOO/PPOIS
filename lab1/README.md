@@ -11,10 +11,11 @@
 
 ```text
 lab1/
-├── src/            # Реализация бизнес-логики классов (.cpp и .h)
+├── src/            # Реализация логики классов (.cpp)
 │   ├── Set.cpp
+│   └── TicTacToe.cpp
+├── include/        # Объявление классов (.h)
 │   ├── Set.h
-│   ├── TicTacToe.cpp
 │   └── TicTacToe.h
 ├── app/            # Консольный пользовательский интерфейс (CLI)
 │   └── main.cpp

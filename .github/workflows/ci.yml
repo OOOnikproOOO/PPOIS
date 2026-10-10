@@ -39,13 +39,10 @@ jobs:
       - name: Run tests
         run: ./lab1/build/Tests_Run
 
-      - name: Check coverage (>= 90% lines)
+      - name: Check coverage
         run: |
-          gcovr --root lab1 \
-                --object-directory lab1/build \
-                --filter "src/.*" \
-                --print-summary \
-                --fail-under-line 90
+          cd lab1
+          gcovr --print-summary --fail-under-line 90
 
       - name: Run cppcheck (static analysis)
         run: |
