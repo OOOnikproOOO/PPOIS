@@ -172,3 +172,45 @@ TEST(SetTest, MissingBranchesCoverage) {
     Set diff = s1 - s2;
     EXPECT_FALSE(diff[sub]);
 }
+
+TEST(SetTest, MissingOperatorCoverage) {
+    Set s1, s2;
+    s1.Add("A");
+    s2.Add("A");
+    s2.Add("B");
+
+    EXPECT_FALSE(s1 == s2);
+
+    Set s3, s4;
+    s3.Add("A");
+    s4.Add("B");
+
+    EXPECT_FALSE(s3 == s4);
+
+    EXPECT_FALSE(s1.IsEmpty());
+}
+
+TEST(SetTest, MathOperatorsWithSubsets) {
+    Set s1, s2, sub1, sub2;
+    sub1.Add("inner1");
+    sub2.Add("inner2");
+
+    s1.Add(sub1);
+    s2.Add(sub1);
+    s2.Add(sub2);
+
+    Set u = s1 + s2;
+    EXPECT_EQ(u.Size(), 2);
+
+    Set i = s1 * s2;
+    EXPECT_EQ(i.Size(), 1);
+
+    Set d = s2 - s1;
+    EXPECT_EQ(d.Size(), 1);
+
+    s1 += s2;
+    EXPECT_EQ(s1.Size(), 2);
+
+    s1 -= s2;
+    EXPECT_TRUE(s1.IsEmpty());
+}
