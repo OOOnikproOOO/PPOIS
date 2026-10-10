@@ -1,0 +1,105 @@
+\chapter{Лабораторная работа №1 — Основы ООП на C++ }
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{Лабораторная работа №1 — Основы ООП на C++@{Лабораторная работа №1 — Основы ООП на C++}}
+\label{md__r_e_a_d_m_e_autotoc_md0}%
+\Hypertarget{md__r_e_a_d_m_e_autotoc_md0}%
+
+
+{\bfseries{Студент:}} Момот Никита Дмитриевич ~\newline
+ {\bfseries{Группа:}} 521702\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{\texorpdfstring{Варианты}{Варианты}}\label{md__r_e_a_d_m_e_autotoc_md1}
+
+\begin{DoxyItemize}
+\item {\bfseries{1.\+4.\+1 Неориентированное канторовское множество}} — класс для работы с множествами, элементами которых могут быть другие множества.
+\item {\bfseries{1.\+5.\+1 Крестики-\/нолики}} — класс, реализующий логику игры "{}Крестики-\/нолики"{} на поле произвольного размера.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysection{\texorpdfstring{Структура проекта}{Структура проекта}}\label{md__r_e_a_d_m_e_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{lab1/}
+\DoxyCodeLine{├──\ src/\ \ \ \ \ \ \ \ \ \ \ \ \#\ Реализация\ бизнес-\/логики\ классов\ (.cpp\ и\ .h)}
+\DoxyCodeLine{│\ \ \ ├──\ Set.cpp}
+\DoxyCodeLine{│\ \ \ ├──\ Set.h}
+\DoxyCodeLine{│\ \ \ ├──\ TicTacToe.cpp}
+\DoxyCodeLine{│\ \ \ └──\ TicTacToe.h}
+\DoxyCodeLine{├──\ app/\ \ \ \ \ \ \ \ \ \ \ \ \#\ Консольный\ пользовательский\ интерфейс\ (CLI)}
+\DoxyCodeLine{│\ \ \ └──\ main.cpp}
+\DoxyCodeLine{├──\ tests/\ \ \ \ \ \ \ \ \ \ \#\ Unit-\/тесты\ (GoogleTest)}
+\DoxyCodeLine{│\ \ \ └──\ tests.cpp}
+\DoxyCodeLine{├──\ docs/\ \ \ \ \ \ \ \ \ \ \ \#\ Doxygen-\/документация\ (генерируется)}
+\DoxyCodeLine{├──\ .github/\ \ \ \ \ \ \ \ \#\ Настройки\ CI/CD\ пайплайна}
+\DoxyCodeLine{├──\ CMakeLists.txt\ \ \#\ Файл\ конфигурации\ сборки}
+\DoxyCodeLine{└──\ Doxyfile\ \ \ \ \ \ \ \ \#\ Конфигурация\ для\ генерации\ документации}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysection{\texorpdfstring{Возможности классов}{Возможности классов}}\label{md__r_e_a_d_m_e_autotoc_md3}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysubsection{\texorpdfstring{Set (Множество)}{Set (Множество)}}\label{md__r_e_a_d_m_e_autotoc_md4}
+
+\begin{DoxyItemize}
+\item Элементом может быть другое множество.
+\item Проверка на пустоту и определение мощности множества.
+\item Добавление и удаление элементов.
+\item Проверка принадлежности элемента ({\ttfamily \+[]}).
+\item Сравнение множеств на равенство ({\ttfamily ==}, {\ttfamily !=}).
+\item Объединение ({\ttfamily +}, {\ttfamily +=}), пересечение ({\ttfamily \texorpdfstring{$\ast$}{*}}, {\ttfamily \texorpdfstring{$\ast$}{*}=}) и разность ({\ttfamily -\/}, {\ttfamily -\/=}).
+\item Построение булеана (множества всех подмножеств).
+\item Формирование множества из строки и потоковый ввод/\+вывод ({\ttfamily \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}}, {\ttfamily \texorpdfstring{$>$}{>}\texorpdfstring{$>$}{>}}).
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysubsection{\texorpdfstring{Tic\+Tac\+Toe (Крестики-\/нолики)}{Tic\+Tac\+Toe (Крестики-\/нолики)}}\label{md__r_e_a_d_m_e_autotoc_md5}
+
+\begin{DoxyItemize}
+\item Игровое поле произвольного размера (от 3x3 и больше).
+\item Проверка возможности установки крестика/\+нолика в указанной позиции.
+\item Чтение и установка значения клетки через перегрузку ({\ttfamily \+[]}).
+\item Автоматическая смена активного игрока.
+\item Проверка победы одного из игроков по строкам, столбцам и диагоналям.
+\item Проверка на ничью.
+\item Сравнение состояний игр ({\ttfamily ==}, {\ttfamily !=}).
+\item Потоковый ввод/\+вывод игрового поля ({\ttfamily \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}}, {\ttfamily \texorpdfstring{$>$}{>}\texorpdfstring{$>$}{>}}).
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md6}{}\doxysection{\texorpdfstring{Сборка из консоли (без IDE)}{Сборка из консоли (без IDE)}}\label{md__r_e_a_d_m_e_autotoc_md6}
+Проект собирается с использованием {\bfseries{CMake}}. Нужно убедиться, что установлены CMake (≥ 3.\+14) и компилятор с поддержкой C++17. Библиотека тестирования Google\+Test подтягивается автоматически.\hypertarget{md__r_e_a_d_m_e_autotoc_md7}{}\doxysubsection{\texorpdfstring{Linux / mac\+OS}{Linux / mac\+OS}}\label{md__r_e_a_d_m_e_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build}
+\DoxyCodeLine{cmake\ -\/-\/build\ build}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md8}{}\doxysubsection{\texorpdfstring{Windows}{Windows}}\label{md__r_e_a_d_m_e_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build}
+\DoxyCodeLine{cmake\ -\/-\/build\ build}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md9}{}\doxysection{\texorpdfstring{Запуск}{Запуск}}\label{md__r_e_a_d_m_e_autotoc_md9}
+После успешной сборки в папке {\ttfamily build} (или {\ttfamily build/\+\+Debug} на Windows) появятся исполняемые файлы. Интерфейс полностью отделен от логики предметной области.
+
+{\bfseries{Запуск консольного меню (CLI):}}
+\begin{DoxyItemize}
+\item Windows: {\ttfamily .\textbackslash{}build\textbackslash{}Debug\textbackslash{}Lab1\+\_\+\+Run.\+exe}
+\item Linux: {\ttfamily ./\+build/\+\+Lab1\+\_\+\+Run}
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md10}{}\doxysection{\texorpdfstring{Тестирование}{Тестирование}}\label{md__r_e_a_d_m_e_autotoc_md10}
+Проект покрыт unit-\/тестами с использованием Google\+Test (покрытие \texorpdfstring{$>$}{>} 90\%). Поскольку тесты интегрированы в CMake (CTest), запустить их можно двумя способами из консоли:
+
+{\bfseries{Способ 1: Прямой запуск}}
+\begin{DoxyItemize}
+\item Windows: {\ttfamily .\textbackslash{}build\textbackslash{}Debug\textbackslash{}Tests\+\_\+\+Run.\+exe}
+\item Linux: {\ttfamily ./\+build/\+\+Tests\+\_\+\+Run}
+\end{DoxyItemize}
+
+{\bfseries{Способ 2: Через CTest}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ build}
+\DoxyCodeLine{ctest\ -\/-\/output-\/on-\/failure}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md11}{}\doxysection{\texorpdfstring{Документация}{Документация}}\label{md__r_e_a_d_m_e_autotoc_md11}
+Для генерации документации нужно перейти в корень проекта и выполнить: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doxygen\ Doxyfile}
+
+\end{DoxyCode}
+ Затем откройте файл {\ttfamily docs/\+html/\+index.\+html} в браузере.\hypertarget{md__r_e_a_d_m_e_autotoc_md12}{}\doxysection{\texorpdfstring{CI/\+\+CD Pipeline}{CI/\+\+CD Pipeline}}\label{md__r_e_a_d_m_e_autotoc_md12}
+При каждом пуше или Pull Request автоматически запускается Git\+Hub Actions workflow ({\ttfamily .github/\+workflows/\+ci.\+yml}), который выполняет:
+\begin{DoxyEnumerate}
+\item Сборку проекта (CMake).
+\item Запуск всех unit-\/тестов.
+\item Проверку кода линтером (cpplint).
+\item Публикацию исполняемого артефакта в Releases (при пуше тега версии). 
+\end{DoxyEnumerate}

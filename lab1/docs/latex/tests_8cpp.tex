@@ -1,0 +1,85 @@
+\doxysection{tests/\+tests.cpp File Reference}
+\hypertarget{tests_8cpp}{}\label{tests_8cpp}\index{tests/tests.cpp@{tests/tests.cpp}}
+
+
+Модульные тесты для классов Set и Tic\+Tac\+Toe с использованием Google\+Test.  
+
+
+{\ttfamily \+\#include $<$gtest/\+gtest.\+h$>$}\newline
+{\ttfamily \+\#include $<$sstream$>$}\newline
+{\ttfamily \+\#include "{}Set.\+h"{}}\newline
+{\ttfamily \+\#include "{}Tic\+Tac\+Toe.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{tests_8cpp_afbc81b27e06b8c9eec2bc6d6f9fea01e}\label{tests_8cpp_afbc81b27e06b8c9eec2bc6d6f9fea01e} 
+{\bfseries TEST} (Set\+Test, Default\+Constructor\+And\+Empty\+Check)
+\item 
+\Hypertarget{tests_8cpp_a241493e2155f476b8b3ba667f26d52f0}\label{tests_8cpp_a241493e2155f476b8b3ba667f26d52f0} 
+{\bfseries TEST} (Set\+Test, Copy\+Constructor)
+\item 
+\Hypertarget{tests_8cpp_a21ec9a437fb5cebc4547d14581ea9e9d}\label{tests_8cpp_a21ec9a437fb5cebc4547d14581ea9e9d} 
+{\bfseries TEST} (Set\+Test, Assignment\+Operator)
+\item 
+\Hypertarget{tests_8cpp_a25d79d9ab4b9c88af06d59b9fc734fa4}\label{tests_8cpp_a25d79d9ab4b9c88af06d59b9fc734fa4} 
+{\bfseries TEST} (Set\+Test, Add\+And\+Check\+String\+Elements)
+\item 
+\Hypertarget{tests_8cpp_a38bcaecd307d1c957f6188bc21c7ee67}\label{tests_8cpp_a38bcaecd307d1c957f6188bc21c7ee67} 
+{\bfseries TEST} (Set\+Test, Add\+And\+Check\+Subset\+Elements)
+\item 
+\Hypertarget{tests_8cpp_a9e32736953dca080aaf264e2b9b2522f}\label{tests_8cpp_a9e32736953dca080aaf264e2b9b2522f} 
+{\bfseries TEST} (Set\+Test, Delete\+String\+And\+Subset)
+\item 
+\Hypertarget{tests_8cpp_a2a30f8d319bc71536160e8283749ffc6}\label{tests_8cpp_a2a30f8d319bc71536160e8283749ffc6} 
+{\bfseries TEST} (Set\+Test, Form\+Set\+From\+String\+Parsing)
+\item 
+\Hypertarget{tests_8cpp_a5b9cb97aea8a2a3c31196d25b1228640}\label{tests_8cpp_a5b9cb97aea8a2a3c31196d25b1228640} 
+{\bfseries TEST} (Set\+Test, Basic\+Math\+Operators)
+\item 
+\Hypertarget{tests_8cpp_a701c3aa12ae44983ee28838d94dc68bf}\label{tests_8cpp_a701c3aa12ae44983ee28838d94dc68bf} 
+{\bfseries TEST} (Set\+Test, Compound\+Math\+Operators)
+\item 
+\Hypertarget{tests_8cpp_a5f32962ab1e06c0dfbb561e00ea5b3db}\label{tests_8cpp_a5f32962ab1e06c0dfbb561e00ea5b3db} 
+{\bfseries TEST} (Set\+Test, Boolean\+Generation)
+\item 
+\Hypertarget{tests_8cpp_a81bd64c4fbd21f9ec9830028c0dd3897}\label{tests_8cpp_a81bd64c4fbd21f9ec9830028c0dd3897} 
+{\bfseries TEST} (Set\+Test, IOStreams)
+\item 
+\Hypertarget{tests_8cpp_a174179bd7c1f5f006030552606c80ea0}\label{tests_8cpp_a174179bd7c1f5f006030552606c80ea0} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Constructor\+And\+Getters)
+\item 
+\Hypertarget{tests_8cpp_a79cdc7de1fe76b9db0f73ed804d902b7}\label{tests_8cpp_a79cdc7de1fe76b9db0f73ed804d902b7} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Index\+Operator\+Read\+And\+Write)
+\item 
+\Hypertarget{tests_8cpp_a7d9e40fd502fb9fab2cd0fd1173e329c}\label{tests_8cpp_a7d9e40fd502fb9fab2cd0fd1173e329c} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Valid\+Move\+Checking)
+\item 
+\Hypertarget{tests_8cpp_aaa0eeac54c3a3b6cb37c787f68ea28d5}\label{tests_8cpp_aaa0eeac54c3a3b6cb37c787f68ea28d5} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Player\+Switching)
+\item 
+\Hypertarget{tests_8cpp_a006d226f2c14868da19769ee4b827fd1}\label{tests_8cpp_a006d226f2c14868da19769ee4b827fd1} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Check\+Win\+Rows\+And\+Columns)
+\item 
+\Hypertarget{tests_8cpp_a4015944214f8f44a9225fa184731ba3f}\label{tests_8cpp_a4015944214f8f44a9225fa184731ba3f} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Check\+Win\+Diagonals)
+\item 
+\Hypertarget{tests_8cpp_a3c9b17dde593f2e31cd61b2ad3275b8e}\label{tests_8cpp_a3c9b17dde593f2e31cd61b2ad3275b8e} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Draw\+Logic\+And\+Reset)
+\item 
+\Hypertarget{tests_8cpp_ae032cda1ca7154806a8fe1029f34f69d}\label{tests_8cpp_ae032cda1ca7154806a8fe1029f34f69d} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, Equality\+Operators)
+\item 
+\Hypertarget{tests_8cpp_a0f17a409239bb9abd7d1c9fa18dc3cf8}\label{tests_8cpp_a0f17a409239bb9abd7d1c9fa18dc3cf8} 
+{\bfseries TEST} (Tic\+Tac\+Toe\+Test, IOStreams)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Модульные тесты для классов Set и Tic\+Tac\+Toe с использованием Google\+Test. 
+
+\begin{DoxyAuthor}{Author}
+Nikita Momot 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2026 
+\end{DoxyDate}
