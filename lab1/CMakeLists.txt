@@ -22,7 +22,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(Tests_Run tests/tests.cpp src/Set.cpp src/TicTacToe.cpp)
+add_executable(Tests_Run tests/test_set.cpp tests/test_tictactoe.cpp src/Set.cpp src/TicTacToe.cpp)
 target_include_directories(Tests_Run PRIVATE include)
 
 target_link_libraries(Tests_Run gtest_main)
