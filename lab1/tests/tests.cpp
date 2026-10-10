@@ -236,4 +236,47 @@ TEST(TicTacToeTest, IOStreams) {
     game[0][0] = 'X';
     output << game;
     EXPECT_NE(output.str().find("X"), std::string::npos);
+
 }
+
+    TEST(SetTest, FormSetFromStringAppendAndEdgeCases) {
+        Set s1;
+        s1.FormSetFromString("{a, b}", true);
+        s1.FormSetFromString("{c}", false);
+        EXPECT_EQ(s1.Size(), 3);
+        EXPECT_TRUE(s1["c"]);
+
+        Set s2;
+        s2.FormSetFromString("{}", true);
+        EXPECT_TRUE(s2.IsEmpty());
+
+        s2.FormSetFromString("{x,,y}", true);
+        EXPECT_TRUE(s2["x"]);
+        EXPECT_TRUE(s2["y"]);
+    }
+
+    TEST(SetTest, MissingBranchesCoverage) {
+        Set s1, s2, sub;
+        sub.Add("inner");
+        s1.Add(sub);
+
+        EXPECT_TRUE(s1 != s2);
+
+        Set sub2;
+        sub2.Add("not_exist");
+        EXPECT_FALSE(s1.Delete(sub2));
+
+        s2.Add(sub);
+        Set diff = s1 - s2;
+        EXPECT_FALSE(diff[sub]);
+    }
+
+    TEST(TicTacToeTest, InvalidMovesAndInequality) {
+        TicTacToe game(3);
+
+        game[0][0] = 'X';
+        EXPECT_FALSE(game.IsValidMove(0, 0));
+
+        TicTacToe game2(3);
+        EXPECT_TRUE(game != game2);
+    }

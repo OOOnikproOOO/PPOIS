@@ -42,7 +42,7 @@ jobs:
       - name: Check coverage
         run: |
           cd lab1
-          gcovr --print-summary --fail-under-line 90
+          gcovr --filter "src/.*" --print-summary --fail-under-line 90
 
       - name: Run cppcheck (static analysis)
         run: |
