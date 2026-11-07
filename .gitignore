@@ -1,24 +1,26 @@
-Игнорируем папку сборки CMake
-
+# Сборочные директории и кэш CMake
 build/
+CMakeCache.txt
+CMakeFiles/
+cmake-install/
+_deps/
 
-Игнорируем скомпилированные исполняемые файлы
-
+# Исполняемые файлы и библиотеки
 *.exe
 *.dll
 *.so
 *.o
 *.obj
+*.lib
 
-Игнорируем файлы настроек IDE
+# Документация (автогенерируемая)
+docs/
 
+# Файлы настроек IDE (Visual Studio, VS Code, CLion)
 .vs/
 .idea/
 .vscode/
 *.user
 *.suo
-
-Игнорируем кэш CMake
-
-CMakeCache.txt
-CMakeFiles/
+*.vcxproj.filters
+*.vcxproj.user
