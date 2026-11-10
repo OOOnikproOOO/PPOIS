@@ -12,7 +12,8 @@
 - **Вычислительные компоненты:** процессор (CPU), физические ядра (CPUCore), многоуровневая кэш-память (CPUCache), термоинтерфейс (ThermalPaste).
 - **Подсистема оперативной памяти:** модули памяти (RAMStick), тайминги (RAMTiming), многоканальная подсистема (RAM).
 - **Подсистема постоянной памяти и хранилища:** твердотельные накопители (SSD), магнитные диски (HDD), RAID-контроллер (StorageController).
-- **Последующие модули:** графическая подсистема (GPU, VRAM, VideoPort), аудиоподсистема (SoundCard, DAC, DSP), материнская плата, подсистема питания и охлаждения, сетевые интерфейсы, периферия, BIOS/UEFI, POST-тестирование и сборщик ПК.
+- **Графическая подсистема:** графический процессор (GPUCore), видеопамять (VRAM), видеовыходы (VideoPort), дискретная видеокарта (GraphicsCard), монитор (Display).
+- **Аудиоподсистема:** цифро-аналоговый преобразователь (AudioDAC), цифровой процессор сигналов (AudioDSP), аудиоразъемы (AudioJack), звуковая карта (SoundCard), акустическая система (SpeakerSystem).
 
 ---
 
@@ -31,32 +32,21 @@ lab2/
 │   ├── SSD.h                    # Твердотельный накопитель
 │   ├── HDD.h                    # Жесткий диск
 │   ├── StorageController.h      # Дисковый RAID-контроллер
-│   └── ThermalPaste.h           # Термоинтерфейс
+│   ├── ThermalPaste.h           # Термоинтерфейс
+│   ├── GPUCore.h                # Графический процессор (GPU)
+│   ├── VRAM.h                   # Видеопамять (GDDR6/GDDR6X)
+│   ├── VideoPort.h              # Видеовыходы (HDMI, DisplayPort)
+│   ├── GraphicsCard.h           # Дискретная видеокарта
+│   ├── AudioDAC.h               # Аудио ЦАП
+│   ├── AudioDSP.h               # Цифровой процессор звуковых эффектов
+│   ├── AudioJack.h              # Аналоговые аудиоразъемы 3.5мм
+│   ├── SoundCard.h              # Звуковая карта
+│   ├── Display.h                # Монитор
+│   └── SpeakerSystem.h          # Акустическая система
 ├── src/                         # Реализация логики классов (.cpp)
-│   ├── CPUCache.cpp
-│   ├── CPUCore.cpp
-│   ├── CPU.cpp
-│   ├── RAMTiming.cpp
-│   ├── RAMStick.cpp
-│   ├── RAM.cpp
-│   ├── SSD.cpp
-│   ├── HDD.cpp
-│   ├── StorageController.cpp
-│   └── ThermalPaste.cpp
 ├── app/                         # Консольный интерфейс пользователя (CLI)
 │   └── main.cpp
 ├── tests/                       # Unit-тесты для каждого класса (GoogleTest)
-│   ├── test_exceptions.cpp
-│   ├── test_cpu_cache.cpp
-│   ├── test_cpu_core.cpp
-│   ├── test_cpu.cpp
-│   ├── test_ram_timing.cpp
-│   ├── test_ram_stick.cpp
-│   ├── test_ram.cpp
-│   ├── test_ssd.cpp
-│   ├── test_hdd.cpp
-│   ├── test_storage_controller.cpp
-│   └── test_thermal_paste.cpp
 ├── CMakeLists.txt               # Сценарий сборки CMake
 ├── Doxyfile                     # Конфигурация Doxygen
 └── README.md                    # Документация проекта
@@ -64,21 +54,31 @@ lab2/
 
 ---
 
-## 3. Таблица классов (Модуль 1: Первые 10 классов)
+## 3. Таблица классов
 
-| Класс | Поля | Методы | Ассоциации (связанные классы) |
-|---|---|---|---|
-| Exceptions | 1 | 12 | ComputerException, ThermalThrottlingException, MemoryAllocationException и др. |
-| CPUCache | 6 | 6 | — |
-| CPUCore | 6 | 6 | — |
-| CPU | 6 | 6 | CPUCore, CPUCache |
-| RAMTiming | 5 | 5 | — |
-| RAMStick | 7 | 6 | RAMTiming |
-| RAM | 4 | 5 | RAMStick |
-| SSD | 7 | 6 | — |
-| HDD | 7 | 6 | — |
-| StorageController | 5 | 5 | SSD, HDD |
-| ThermalPaste | 6 | 6 | — |
+| № | Класс | Поля | Методы | Ассоциации (связанные классы) |
+|---|---|---|---|---|
+| — | Exceptions | 1 | 12 | ComputerException, ThermalThrottlingException, MemoryAllocationException и др. |
+| 1 | CPUCache | 6 | 6 | — |
+| 2 | CPUCore | 6 | 6 | — |
+| 3 | CPU | 6 | 7 | CPUCore, CPUCache |
+| 4 | RAMTiming | 5 | 5 | — |
+| 5 | RAMStick | 6 | 6 | RAMTiming |
+| 6 | RAM | 4 | 6 | RAMStick |
+| 7 | SSD | 6 | 6 | — |
+| 8 | HDD | 7 | 6 | — |
+| 9 | StorageController | 5 | 5 | SSD, HDD |
+| 10 | ThermalPaste | 6 | 6 | — |
+| 11 | GPUCore | 4 | 5 | — |
+| 12 | VRAM | 4 | 5 | — |
+| 13 | VideoPort | 4 | 4 | — |
+| 14 | GraphicsCard | 5 | 6 | GPUCore, VRAM, VideoPort |
+| 15 | AudioDAC | 4 | 5 | — |
+| 16 | AudioDSP | 4 | 5 | — |
+| 17 | AudioJack | 4 | 4 | — |
+| 18 | SoundCard | 5 | 6 | AudioDAC, AudioDSP, AudioJack |
+| 19 | Display | 5 | 6 | — |
+| 20 | SpeakerSystem | 4 | 5 | — |
 
 ---
 
@@ -114,7 +114,7 @@ lab2/
 
 ## 6. Сборка и запуск
 
-### Сборка через CMake (без IDE)
+### Сборка через CMake
 
 ```bash
 cmake -S lab2 -B lab2/build

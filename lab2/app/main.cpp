@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief Interactive Command Line Interface (CLI) for the Computer System simulation.
+ * @brief Interactive Command Line Interface (CLI) for the Computer simulation.
  * @author Nikita Momot
  * @date 2026
  */
@@ -18,13 +18,15 @@
 #include "HDD.h"
 #include "StorageController.h"
 #include "ThermalPaste.h"
+#include "GraphicsCard.h"
+#include "SoundCard.h"
+#include "Display.h"
+#include "SpeakerSystem.h"
 #include "Exceptions.h"
 
 using namespace std;
 
-// ============================================================================
-// Table Menu UI Helpers (Framed with '|')
-// ============================================================================
+// Table Menu Helpers
 
 void PrintDivider(int width = 52) {
     for (int i = 0; i < width; i++) cout << "-";
@@ -52,9 +54,13 @@ void PrintHeader(const string& title, int width = 52) {
     PrintDivider(width);
 }
 
-// ============================================================================
+string FormatDouble(double val, int precision = 1) {
+    ostringstream oss;
+    oss << fixed << setprecision(precision) << val;
+    return oss.str();
+}
+
 // Input Helper Functions
-// ============================================================================
 
 int PromptChoice() {
     cout << "Selected: ";
@@ -164,9 +170,7 @@ double PromptDouble(const string& prompt, double default_val, double min_val = -
     }
 }
 
-// ============================================================================
-// Global Simulator Hardware State
-// ============================================================================
+// Simulator Hardware State
 
 struct HardwareState {
     CPU cpu;
@@ -175,14 +179,14 @@ struct HardwareState {
     HDD hdd;
     StorageController controller;
     ThermalPaste paste;
+    GraphicsCard gpu;
+    SoundCard sound_card;
+    Display display;
+    SpeakerSystem speakers;
 
-    HardwareState()
-        : cpu("AMD Ryzen 7 7800X3D", "AM5", 120, 98304),
-          ram(4),
-          ssd("Samsung 990 PRO", "NVMe PCIe 4.0", 2000, 1200.0),
-          hdd("Seagate IronWolf Pro", 7200, 4000, 256),
-          controller("PCIe NVMe Controller"),
-          paste("Noctua NT-H2", 9.0, 50000.0, 0.04) {
+    HardwareState() : cpu("AMD Ryzen 7 7800X3D", "AM5", 120, 98304), ram(4), ssd("Samsung 990 PRO", "NVMe PCIe 4.0", 2000, 1200.0), hdd("Seagate IronWolf Pro", 7200, 4000, 256),
+          controller("PCIe NVMe Controller"), paste("Noctua NT-H2", 9.0, 50000.0, 0.04), gpu("NVIDIA GeForce RTX 4080", 320, GPUCore(0, 2200), VRAM(16384, 256, "GDDR6X")),
+          sound_card("Creative Sound BlasterX AE-5", 6, AudioDAC(96000, 24, 122.0), AudioDSP("Gaming Surround", 1, 0.0)), display("LG UltraGear 27GP850", 2560, 1440, 165), speakers("Edifier R1280DB", 42, 35) {
         cpu.AddCore(CPUCore(0, 4200, true));
         cpu.AddCore(CPUCore(1, 4200, true));
         cpu.AddCore(CPUCore(2, 4200, true));
@@ -195,12 +199,20 @@ struct HardwareState {
 
         controller.AttachSSD(ssd);
         controller.AttachHDD(hdd);
+
+        gpu.AddPort(VideoPort("DisplayPort 1.4", 3840, 240));
+        gpu.AddPort(VideoPort("DisplayPort 1.4", 3840, 240));
+        gpu.AddPort(VideoPort("HDMI 2.1", 3840, 144));
+        gpu.GetPort(0).ConnectCable();
+
+        sound_card.AddJack(AudioJack("Line Out 3.5mm", "Green", 32.0));
+        sound_card.AddJack(AudioJack("Mic In 3.5mm", "Pink", 1000.0));
+        sound_card.AddJack(AudioJack("Headphone Out", "Black", 16.0));
+        sound_card.GetJack(0).PlugIn();
     }
 };
 
-// ============================================================================
-// Subsystem Action Menus
-// ============================================================================
+// Action Menus
 
 void ActionCpu(HardwareState& state) {
     while (true) {
@@ -212,6 +224,13 @@ void ActionCpu(HardwareState& state) {
         PrintRow("4 - Add new CPU core");
         PrintRow("5 - L3 Cache access (Read/Write/Flush)");
         PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Status: " + to_string(state.cpu.GetCoreCount()) + " cores | " +
+                 FormatDouble(state.cpu.GetAverageTemperature()) + " C | " +
+                 to_string(state.cpu.CalculateCurrentPowerDraw()) + " W");
+        PrintRow("Model: " + state.cpu.GetModelName() + " (" + state.cpu.GetSocketType() + ")");
+        PrintRow("L3 Cache: " + to_string(state.cpu.GetL3Cache().GetSizeKb()) + " KB | TDP: " +
+                 to_string(state.cpu.GetTdpWatts()) + " W");
         PrintDivider();
 
         int choice = PromptChoice();
@@ -283,6 +302,13 @@ void ActionRam(HardwareState& state) {
         PrintRow("5 - Enable XMP profile");
         PrintRow("6 - Memory integrity diagnostics");
         PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Allocated: " + to_string(state.ram.GetTotalAllocatedMb()) + " / " +
+                 to_string(state.ram.GetTotalCapacityMb()) + " MB (" +
+                 FormatDouble(state.ram.GetTotalCapacityMb() ? (100.0 * state.ram.GetTotalAllocatedMb() / state.ram.GetTotalCapacityMb()) : 0.0) + "%)");
+        PrintRow("Modules: " + to_string(state.ram.GetInstalledSticksCount()) + " / " +
+                 to_string(state.ram.GetMaxSlots()) + " slots (" +
+                 to_string(state.ram.GetChannelMode()) + "x mode)");
         PrintDivider();
 
         int choice = PromptChoice();
@@ -359,12 +385,17 @@ void ActionRam(HardwareState& state) {
 void ActionSsd(HardwareState& state) {
     while (true) {
         cout << "\n\n\n";
-        PrintHeader("SSD Drive");
+        PrintHeader("SSD");
         PrintRow("1 - Write data");
         PrintRow("2 - Read data");
         PrintRow("3 - Perform NAND TRIM");
         PrintRow("4 - S.M.A.R.T. health check");
         PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Used: " + FormatDouble(state.ssd.GetUsedGb()) + " / " +
+                 FormatDouble(state.ssd.GetCapacityGb()) + " GB | Health: " +
+                 to_string(static_cast<int>(state.ssd.GetHealthPercentage())) + "%");
+        PrintRow("Model: " + state.ssd.GetModel() + " [" + state.ssd.GetInterfaceType() + "]");
         PrintDivider();
 
         int choice = PromptChoice();
@@ -410,13 +441,19 @@ void ActionSsd(HardwareState& state) {
 void ActionHdd(HardwareState& state) {
     while (true) {
         cout << "\n\n\n";
-        PrintHeader("HDD Drive");
+        PrintHeader("HDD");
         PrintRow("1 - Write data");
         PrintRow("2 - Read data");
         PrintRow("3 - Spin up spindle");
         PrintRow("4 - Park heads safely");
         PrintRow("5 - Scan for bad sectors");
         PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Used: " + FormatDouble(state.hdd.GetUsedGb()) + " / " +
+                 FormatDouble(state.hdd.GetCapacityGb()) + " GB | Bad: " +
+                 to_string(state.hdd.GetBadSectorsCount()));
+        PrintRow("Spindle: " + string(state.hdd.AreHeadsParked() ? "Parked (Standby)" :
+                 to_string(state.hdd.GetRpm()) + " RPM (Active)"));
         PrintDivider();
 
         int choice = PromptChoice();
@@ -462,6 +499,10 @@ void ActionStorageController(HardwareState& state) {
         PrintRow("2 - Perform integrity check");
         PrintRow("3 - Sync controller with drives");
         PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Controller: " + state.controller.GetControllerType());
+        PrintRow("RAID Mode: " + state.controller.GetRaidMode() + " | Usable: " +
+                 FormatDouble(state.controller.GetTotalCapacityGb()) + " GB");
         PrintDivider();
 
         int choice = PromptChoice();
@@ -509,6 +550,11 @@ void ActionThermalPaste(HardwareState& state) {
         PrintRow("3 - Replace thermal paste");
         PrintRow("0 - Return");
         PrintDivider();
+        PrintRow("Paste: " + state.paste.GetBrandName() + " (" +
+                 (state.paste.IsEffective() ? "Optimal" : "Degraded!") + ")");
+        PrintRow("Conductivity: " + FormatDouble(state.paste.GetThermalConductivity()) +
+                 " W/(m*K) | Eff: " + FormatDouble(state.paste.EvaluateHeatTransferEfficiency(), 3));
+        PrintDivider();
 
         int choice = PromptChoice();
         if (choice == 0) break;
@@ -532,6 +578,158 @@ void ActionThermalPaste(HardwareState& state) {
                 state.paste.ReplacePaste(cond, thick);
                 cout << "SUCCESS: Fresh thermal compound applied!\n";
                 cout << "New Efficiency Score: " << state.paste.EvaluateHeatTransferEfficiency() << "\n";
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
+void ActionGraphics(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("Graphics Card & Display");
+        PrintRow("1 - Render 3D scene (Workload & VRAM)");
+        PrintRow("2 - Set GPU clock frequency");
+        PrintRow("3 - Cool down GPU core");
+        PrintRow("4 - Configure display (Resolution/Refresh)");
+        PrintRow("5 - Connect / Disconnect monitor cable");
+        PrintRow("6 - Toggle display monitor power");
+        PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("GPU: " + to_string(state.gpu.GetGPUCore().GetClockMhz()) + " MHz | " +
+                 FormatDouble(state.gpu.GetGPUCore().GetTemperatureCelsius()) + " C | Load: " +
+                 to_string(static_cast<int>(state.gpu.GetGPUCore().GetLoadPercentage())) + "%");
+        PrintRow("VRAM: " + to_string(state.gpu.GetVRAM().GetUsedMb()) + " / " +
+                 to_string(state.gpu.GetVRAM().GetCapacityMb()) + " MB | " +
+                 to_string(state.gpu.CalculateCurrentPowerDraw()) + " W");
+        PrintRow("Display: " + to_string(state.display.GetResolutionWidth()) + "x" +
+                 to_string(state.display.GetResolutionHeight()) + "@" +
+                 to_string(state.display.GetRefreshRateHz()) + "Hz [" +
+                 (state.display.IsPoweredOn() ? "ON" : "OFF") + "]");
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                int frames = PromptInt("Number of frames to render", 60, 1, 1000);
+                int tex_mb = PromptInt("Texture memory required (MB)", 2048, 1, 32768);
+                state.gpu.RenderScene(frames, tex_mb);
+                cout << "SUCCESS: 3D scene rendered successfully!\n";
+                cout << "GPU Temperature: " << state.gpu.GetGPUCore().GetTemperatureCelsius() << " C\n";
+                cout << "GPU Load:        " << state.gpu.GetGPUCore().GetLoadPercentage() << "%\n";
+                cout << "VRAM Used:       " << state.gpu.GetVRAM().GetUsedMb() << " / "
+                     << state.gpu.GetVRAM().GetCapacityMb() << " MB\n";
+                cout << "Current Power:   " << state.gpu.CalculateCurrentPowerDraw() << " W\n";
+            } else if (choice == 2) {
+                int clock = PromptInt("Target GPU clock frequency (MHz)", 2400, 500, 4000);
+                state.gpu.GetGPUCore().SetClockMhz(clock);
+                cout << "SUCCESS: GPU clock frequency set to " << clock << " MHz!\n";
+            } else if (choice == 3) {
+                double delta = PromptDouble("Cool down temperature delta (Celsius)", 15.0, 1.0, 100.0);
+                state.gpu.GetGPUCore().CoolDown(delta);
+                cout << "SUCCESS: GPU core cooled down! New temperature: "
+                     << state.gpu.GetGPUCore().GetTemperatureCelsius() << " C\n";
+            } else if (choice == 4) {
+                int width = PromptInt("Resolution width", 2560, 640, 7680);
+                int height = PromptInt("Resolution height", 1440, 480, 4320);
+                int hz = PromptInt("Refresh rate (Hz)", 144, 30, 540);
+                state.display.SetResolution(width, height);
+                state.display.SetRefreshRate(hz);
+                cout << "SUCCESS: Display mode updated: " << width << "x" << height << "@" << hz << "Hz!\n";
+                cout << "Total Active Pixels: " << state.display.CalculateTotalPixels() << "\n";
+            } else if (choice == 5) {
+                if (state.gpu.GetPortCount() > 0) {
+                    bool currently = state.gpu.GetPort(0).IsConnected();
+                    if (currently) {
+                        state.gpu.GetPort(0).DisconnectCable();
+                        cout << "SUCCESS: Display cable disconnected from " << state.gpu.GetPort(0).GetPortType() << ".\n";
+                    } else {
+                        state.gpu.GetPort(0).ConnectCable();
+                        cout << "SUCCESS: Display cable connected to " << state.gpu.GetPort(0).GetPortType() << "!\n";
+                    }
+                }
+            } else if (choice == 6) {
+                state.display.PowerToggle();
+                cout << "SUCCESS: Display monitor power toggled: "
+                     << (state.display.IsPoweredOn() ? "POWER ON" : "STANDBY") << "!\n";
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
+void ActionAudio(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("Sound Card & Speakers");
+        PrintRow("1 - Play audio stream");
+        PrintRow("2 - Apply DSP sound profile preset");
+        PrintRow("3 - Adjust speaker volume");
+        PrintRow("4 - Toggle speaker mute");
+        PrintRow("5 - Configure surround sound channels");
+        PrintRow("6 - Plug / Unplug audio jack");
+        PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("DSP: '" + state.sound_card.GetDSP().GetProfileName() + "' | Channels: " +
+                 to_string(state.sound_card.GetChannelCount()));
+        PrintRow("DAC: " + to_string(state.sound_card.GetDAC().GetSamplingRateHz()) +
+                 " Hz / " + to_string(state.sound_card.GetDAC().GetBitDepth()) + "-bit");
+        PrintRow("Speakers: " + to_string(state.speakers.GetCurrentVolume()) + "% " +
+                 (state.speakers.IsMuted() ? "[MUTED]" : "[ACTIVE]") + " | Jack: " +
+                 (state.sound_card.GetJackCount() > 0 && state.sound_card.GetJack(0).IsPlugged() ? "Plugged" : "Open"));
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                int samples = PromptInt("Number of digital PCM samples to play", 48000, 1, 1920000);
+                double vol = PromptDouble("Stream volume level (0.0 to 1.0)", 0.75, 0.0, 1.0);
+                state.sound_card.PlayAudioStream(samples, vol);
+                state.speakers.OutputSound(3, 75.0);
+                cout << "SUCCESS: Audio playback stream processed through DAC & DSP!\n";
+                cout << "Acoustic sound emitted via " << state.speakers.GetSystemName() << ".\n";
+            } else if (choice == 2) {
+                cout << "Available sound profiles: [Flat, Bass Boost, Gaming Surround, Voice Clarity, Studio Clean]\n";
+                string profile = PromptString("Enter preset name", "Bass Boost");
+                state.sound_card.GetDSP().ApplySoundProfile(profile);
+                cout << "SUCCESS: Active audio DSP profile set to '" << profile << "'!\n";
+            } else if (choice == 3) {
+                int vol = PromptInt("Speaker master volume (0 - 100%)", 50, 0, 100);
+                state.speakers.SetVolume(vol);
+                cout << "SUCCESS: Speaker master volume set to " << vol << "%!\n";
+            } else if (choice == 4) {
+                state.speakers.ToggleMute();
+                cout << "SUCCESS: Speaker mute toggled: "
+                     << (state.speakers.IsMuted() ? "MUTED" : "UNMUTED") << "!\n";
+            } else if (choice == 5) {
+                int ch = PromptInt("Surround channel configuration (2, 6, 8)", 6, 2, 8);
+                state.sound_card.ConfigureSurround(ch);
+                cout << "SUCCESS: Sound card configured for " << ch << "-channel surround output!\n";
+            } else if (choice == 6) {
+                if (state.sound_card.GetJackCount() > 0) {
+                    bool currently = state.sound_card.GetJack(0).IsPlugged();
+                    if (currently) {
+                        state.sound_card.GetJack(0).Unplug();
+                        cout << "SUCCESS: Audio jack unplugged.\n";
+                    } else {
+                        state.sound_card.GetJack(0).PlugIn();
+                        cout << "SUCCESS: Audio cable plugged into " << state.sound_card.GetJack(0).GetPortType() << ".\n";
+                    }
+                }
             } else {
                 cout << "Error! Invalid selection! Please enter a valid menu number.\n";
             }
@@ -576,25 +774,43 @@ void ActionSystemSummary(HardwareState& state) {
     cout << " [4] THERMAL INTERFACE\n";
     cout << "     Paste:       " << state.paste.GetBrandName() << "\n";
     cout << "     Efficiency:  " << fixed << setprecision(3) << state.paste.EvaluateHeatTransferEfficiency()
-         << " (" << (state.paste.IsEffective() ? "Optimal" : "Degraded / Repaste required") << ")\n";
+         << " (" << (state.paste.IsEffective() ? "Optimal" : "Degraded / Repaste required") << ")\n\n";
+
+    cout << " [5] GRAPHICS & DISPLAY\n";
+    cout << "     GPU Model:   " << state.gpu.GetModelName() << " [" << state.gpu.GetGPUCore().GetClockMhz() << " MHz]\n";
+    cout << "     GPU Temp:    " << state.gpu.GetGPUCore().GetTemperatureCelsius() << " C (Load: "
+         << state.gpu.GetGPUCore().GetLoadPercentage() << "%)\n";
+    cout << "     VRAM:        " << state.gpu.GetVRAM().GetUsedMb() << " MB used / "
+         << state.gpu.GetVRAM().GetCapacityMb() << " MB " << state.gpu.GetVRAM().GetMemoryType() << "\n";
+    cout << "     GPU Power:   " << state.gpu.CalculateCurrentPowerDraw() << " W\n";
+    cout << "     Display:     " << state.display.GetModel() << " [" << state.display.GetResolutionWidth()
+         << "x" << state.display.GetResolutionHeight() << "@" << state.display.GetRefreshRateHz() << "Hz]\n";
+    cout << "     Status:      " << (state.display.IsPoweredOn() ? "Screen Active" : "Standby") << "\n\n";
+
+    cout << " [6] AUDIO SUBSYSTEM\n";
+    cout << "     Sound Card:  " << state.sound_card.GetCardModel() << " (" << state.sound_card.GetChannelCount() << " Channels)\n";
+    cout << "     Audio DAC:   " << state.sound_card.GetDAC().GetSamplingRateHz() << " Hz, "
+         << state.sound_card.GetDAC().GetBitDepth() << "-bit (SNR: " << state.sound_card.GetDAC().GetSnrDb() << " dB)\n";
+    cout << "     Audio DSP:   Profile: '" << state.sound_card.GetDSP().GetProfileName() << "'\n";
+    cout << "     Speakers:    " << state.speakers.GetSystemName() << " [" << state.speakers.GetPowerWattsRms()
+         << " W RMS, Volume: " << state.speakers.GetCurrentVolume() << "%"
+         << (state.speakers.IsMuted() ? " (MUTED)" : "") << "]\n";
     cout << "===================================================================\n";
 }
 
-// ============================================================================
-// Main Menu
-// ============================================================================
-
 void PrintMainMenu() {
     cout << "\n\n\n";
-    PrintHeader("COMPUTER SYSTEM SIMULATOR CLI");
+    PrintHeader("COMPUTER SIMULATOR CLI");
     PrintRow("1 - CPU & Cores");
     PrintRow("2 - RAM Subsystem");
-    PrintRow("3 - SSD Drive");
-    PrintRow("4 - HDD Drive");
+    PrintRow("3 - SSD");
+    PrintRow("4 - HDD");
     PrintRow("5 - Storage Controller & RAID");
     PrintRow("6 - Thermal Paste");
-    PrintRow("7 - System Passport");
-    PrintRow("8 - Reset to Defaults");
+    PrintRow("7 - Graphics Card & Display");
+    PrintRow("8 - Sound Card & Speakers");
+    PrintRow("9 - System Passport");
+    PrintRow("10 - Reset to Defaults");
     PrintRow("0 - Exit");
     PrintDivider();
 }
@@ -633,9 +849,15 @@ int main() {
             ActionThermalPaste(state);
             break;
         case 7:
+            ActionGraphics(state);
+            break;
+        case 8:
+            ActionAudio(state);
+            break;
+        case 9:
             ActionSystemSummary(state);
             break;
-        case 8: {
+        case 10: {
             string confirm = PromptString("Reset all components to defaults? (yes/no)", "no");
             if (confirm == "yes" || confirm == "y") {
                 state = HardwareState();

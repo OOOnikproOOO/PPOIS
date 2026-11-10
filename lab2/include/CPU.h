@@ -116,12 +116,14 @@ public:
      * @return Reference to CPUCore.
      */
     CPUCore& GetCore(int index);
+    const CPUCore& GetCore(int index) const;
 
     /**
-     * @brief Gets mutable reference to shared L3 cache.
-     * @return Mutable reference to shared L3 cache object.
+     * @brief Gets reference to shared L3 cache.
+     * @return Reference to shared L3 cache object.
      */
     CPUCache& GetL3Cache();
+    const CPUCache& GetL3Cache() const;
 
     /**
      * @brief Checks if processor is running with overclock profile.

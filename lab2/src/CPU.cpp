@@ -103,7 +103,18 @@ CPUCore& CPU::GetCore(int index) {
     return cores_[index];
 }
 
+const CPUCore& CPU::GetCore(int index) const {
+    if (index < 0 || index >= static_cast<int>(cores_.size()))
+        throw DeviceNotFoundException("CPU core index out of range.");
+
+    return cores_[index];
+}
+
 CPUCache& CPU::GetL3Cache() {
+    return l3_cache_;
+}
+
+const CPUCache& CPU::GetL3Cache() const {
     return l3_cache_;
 }
 
