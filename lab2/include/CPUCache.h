@@ -16,7 +16,7 @@
 class CPUCache {
 public:
     /**
-     * @brief Constructor of a CPU cache with specified level, size, and line size.
+     * @brief Constructor of a CPU cache with specified level, size and line size.
      * @param level Cache hierarchy level (1, 2 or 3).
      * @param size_kb Total cache capacity in kilobytes.
      * @param line_size_bytes Cache line size in bytes.

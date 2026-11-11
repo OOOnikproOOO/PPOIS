@@ -20,7 +20,7 @@
 class CPU {
 public:
     /**
-     * @brief Constructs a CPU with specified model, socket, and TDP.
+     * @brief Constructs a CPU with specified model, socket and TDP.
      * @param model_name Processor commercial name.
      * @param socket_type Physical socket interface (e.g., LGA1700, AM5).
      * @param tdp_watts Thermal Design Power in Watts.

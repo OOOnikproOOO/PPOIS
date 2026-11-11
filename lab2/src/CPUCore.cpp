@@ -15,8 +15,8 @@ constexpr double kThrottleThreshold = 95.0;
 constexpr double kCriticalOverheatThreshold = 105.0;
 }
 
-CPUCore::CPUCore(int core_id, int base_clock_mhz, bool enable_hyperthreading)
-    : core_id_(core_id),
+CPUCore::CPUCore(int core_id, int base_clock_mhz, bool enable_hyperthreading) :
+    core_id_(core_id),
       base_clock_mhz_(base_clock_mhz),
       current_clock_mhz_(base_clock_mhz),
       load_percentage_(0.0),

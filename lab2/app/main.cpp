@@ -22,6 +22,10 @@
 #include "SoundCard.h"
 #include "Display.h"
 #include "SpeakerSystem.h"
+#include "Motherboard.h"
+#include "PowerSupply.h"
+#include "CoolingSystem.h"
+#include "ComputerCase.h"
 #include "Exceptions.h"
 
 using namespace std;
@@ -183,10 +187,18 @@ struct HardwareState {
     SoundCard sound_card;
     Display display;
     SpeakerSystem speakers;
+    Motherboard motherboard;
+    PowerSupply psu;
+    CoolingSystem cooling;
+    ComputerCase pc_case;
 
     HardwareState() : cpu("AMD Ryzen 7 7800X3D", "AM5", 120, 98304), ram(4), ssd("Samsung 990 PRO", "NVMe PCIe 4.0", 2000, 1200.0), hdd("Seagate IronWolf Pro", 7200, 4000, 256),
           controller("PCIe NVMe Controller"), paste("Noctua NT-H2", 9.0, 50000.0, 0.04), gpu("NVIDIA GeForce RTX 4080", 320, GPUCore(0, 2200), VRAM(16384, 256, "GDDR6X")),
-          sound_card("Creative Sound BlasterX AE-5", 6, AudioDAC(96000, 24, 122.0), AudioDSP("Gaming Surround", 1, 0.0)), display("LG UltraGear 27GP850", 2560, 1440, 165), speakers("Edifier R1280DB", 42, 35) {
+          sound_card("Creative Sound BlasterX AE-5", 6, AudioDAC(96000, 24, 122.0), AudioDSP("Gaming Surround", 1, 0.0)), display("LG UltraGear 27GP850", 2560, 1440, 165), speakers("Edifier R1280DB", 42, 35),
+          motherboard("ASUS ROG STRIX B650-E", "ATX", "v1.40", VRM(16, 1.25, 38.0, 93.0), Chipset("AMD B650", 36, 4, 10)),
+          psu("Corsair RM850x", 850, "80 PLUS Gold", true),
+          cooling("Standard", 65.0, LiquidCooler("Arctic Liquid Freezer II 360", 360, 2400, 31.0, 150.0)),
+          pc_case("Fractal Design Meshify 2", "ATX", 450, 185, 8.0) {
         cpu.AddCore(CPUCore(0, 4200, true));
         cpu.AddCore(CPUCore(1, 4200, true));
         cpu.AddCore(CPUCore(2, 4200, true));
@@ -209,6 +221,18 @@ struct HardwareState {
         sound_card.AddJack(AudioJack("Mic In 3.5mm", "Pink", 1000.0));
         sound_card.AddJack(AudioJack("Headphone Out", "Black", 16.0));
         sound_card.GetJack(0).PlugIn();
+
+        motherboard.AddSlot(PCIeSlot(0, "PCIe 5.0", 16, true, "NVIDIA GeForce RTX 4080"));
+        motherboard.AddSlot(PCIeSlot(1, "PCIe 4.0", 4, true, "Creative Sound BlasterX AE-5"));
+        motherboard.AddSlot(PCIeSlot(2, "PCIe 4.0", 4, false, ""));
+
+        psu.AddRail(PowerRail("+12V", 12.0, 28.0, 70.0));
+        psu.AddRail(PowerRail("+5V", 5.0, 6.0, 25.0));
+        psu.AddRail(PowerRail("+3.3V", 3.3, 4.0, 25.0));
+
+        cooling.AddFan(CoolingFan("Intake Front #1", 140, 1000, 1800, 50));
+        cooling.AddFan(CoolingFan("Intake Front #2", 140, 1000, 1800, 50));
+        cooling.AddFan(CoolingFan("Exhaust Rear", 120, 1100, 2000, 50));
     }
 };
 
@@ -741,11 +765,189 @@ void ActionAudio(HardwareState& state) {
     }
 }
 
+void ActionMotherboard(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("Motherboard & PCIe");
+        PrintRow("1 - Power-On Self-Test (POST diagnostic)");
+        PrintRow("2 - Flash BIOS version");
+        PrintRow("3 - Adjust VRM VCore voltage");
+        PrintRow("4 - Supply current load to VRM");
+        PrintRow("5 - Cool down VRM");
+        PrintRow("6 - Install / Remove PCIe expansion card");
+        PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Board: " + state.motherboard.GetModelName() + " (" + state.motherboard.GetFormFactor() + ")");
+        PrintRow("BIOS: " + state.motherboard.GetBiosVersion() + " | Chipset: " + state.motherboard.GetChipset().GetModelName());
+        PrintRow("VRM: " + to_string(state.motherboard.GetVRM().GetPhaseCount()) + " phases | " +
+                 FormatDouble(state.motherboard.GetVRM().GetVCoreVoltage(), 2) + " V | " +
+                 FormatDouble(state.motherboard.GetVRM().GetTemperatureCelsius()) + " C");
+        PrintRow("PCIe: " + to_string(state.motherboard.GetSlotCount()) + " slots | OC Support: " +
+                 (state.motherboard.GetChipset().SupportsOverclocking() ? "Yes" : "No"));
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                cout << "Executing Power-On Self-Test (POST)...\n";
+                state.motherboard.PerformPOST();
+                cout << "SUCCESS: POST completed successfully! All motherboard hardware optimal.\n";
+            } else if (choice == 2) {
+                string ver = PromptString("New BIOS version", "v2.10");
+                state.motherboard.FlashBios(ver);
+                cout << "SUCCESS: Motherboard BIOS successfully updated to " << ver << "!\n";
+            } else if (choice == 3) {
+                double v = PromptDouble("Target CPU VCore voltage (0.5V to 1.85V)", 1.25, 0.5, 1.85);
+                state.motherboard.GetVRM().SetVCoreVoltage(v);
+                cout << "SUCCESS: VRM VCore voltage adjusted to " << v << " V!\n";
+            } else if (choice == 4) {
+                double amps = PromptDouble("Current load to supply (Amperes)", 60.0, 1.0, 500.0);
+                state.motherboard.GetVRM().SupplyCurrent(amps);
+                cout << "SUCCESS: Current of " << amps << " A supplied to CPU socket!\n";
+                cout << "VRM Temperature: " << state.motherboard.GetVRM().GetTemperatureCelsius() << " C\n";
+                cout << "Power Loss:      " << state.motherboard.GetVRM().CalculatePowerLossWatts(amps) << " W\n";
+            } else if (choice == 5) {
+                double delta = PromptDouble("Cool down temperature delta (Celsius)", 15.0, 1.0, 100.0);
+                state.motherboard.GetVRM().CoolDown(delta);
+                cout << "SUCCESS: VRM cooled down! New temperature: "
+                     << state.motherboard.GetVRM().GetTemperatureCelsius() << " C\n";
+            } else if (choice == 6) {
+                int slot_idx = PromptInt("Slot index (0 to " + to_string(state.motherboard.GetSlotCount() - 1) + ")", 2, 0, state.motherboard.GetSlotCount() - 1);
+                PCIeSlot& s = state.motherboard.GetSlot(slot_idx);
+                if (s.IsOccupied()) {
+                    cout << "Slot #" << slot_idx << " is currently occupied by: " << s.GetInstalledDeviceName() << "\n";
+                    string confirm = PromptString("Remove this device? (yes/no)", "yes");
+                    if (confirm == "yes" || confirm == "y") {
+                        s.RemoveDevice();
+                        cout << "SUCCESS: Device removed from slot #" << slot_idx << ".\n";
+                    }
+                } else {
+                    string dev = PromptString("Device name to install", "Elgato 4K60 Pro Capture Card");
+                    s.InstallDevice(dev);
+                    cout << "SUCCESS: Installed '" << dev << "' into PCIe slot #" << slot_idx << "!\n";
+                    cout << "Bandwidth: " << s.CalculateBandwidthGBs() << " GB/s\n";
+                }
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
+void ActionPowerSupply(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("Power Supply & Rails");
+        PrintRow("1 - Toggle PSU power state (Power On / Off)");
+        PrintRow("2 - Draw current from +12V rail");
+        PrintRow("3 - Release current from +12V rail");
+        PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("PSU: " + state.psu.GetModelName() + " (" + to_string(state.psu.GetRatedWattage()) + " W)");
+        PrintRow("Rating: " + state.psu.GetEfficiencyRating() + " | State: " + (state.psu.IsPoweredOn() ? "ACTIVE" : "STANDBY"));
+        PrintRow("Total Power: " + to_string(state.psu.CalculateTotalPowerDrawWatts()) + " / " +
+                 to_string(state.psu.GetRatedWattage()) + " W (" +
+                 FormatDouble(100.0 * state.psu.CalculateTotalPowerDrawWatts() / (state.psu.GetRatedWattage() ? state.psu.GetRatedWattage() : 1)) + "%)");
+        PrintRow("+12V Rail: " + FormatDouble(state.psu.GetRail(0).GetCurrentAmperes()) + " A (" +
+                 to_string(static_cast<int>(state.psu.GetRail(0).CalculateCurrentPowerWatts())) + " W)");
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                if (state.psu.IsPoweredOn()) {
+                    state.psu.PowerOff();
+                    cout << "SUCCESS: PSU switched to STANDBY (powered off).\n";
+                } else {
+                    state.psu.PowerOn();
+                    cout << "SUCCESS: PSU powered ON! All DC rails active.\n";
+                }
+            } else if (choice == 2) {
+                double amps = PromptDouble("Amperes to draw from +12V rail", 15.0, 1.0, 100.0);
+                state.psu.GetRail(0).DrawCurrent(amps);
+                cout << "SUCCESS: Drew " << amps << " A from +12V rail!\n";
+                cout << "Current power draw: " << state.psu.CalculateTotalPowerDrawWatts() << " W\n";
+            } else if (choice == 3) {
+                double amps = PromptDouble("Amperes to release from +12V rail", 15.0, 1.0, 100.0);
+                state.psu.GetRail(0).ReleaseCurrent(amps);
+                cout << "SUCCESS: Released " << amps << " A from +12V rail.\n";
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
+void ActionCoolingAndCase(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("Cooling System & Case");
+        PrintRow("1 - Apply fan speed profile");
+        PrintRow("2 - Set AIO water pump RPM");
+        PrintRow("3 - Clean chassis dust filters");
+        PrintRow("4 - Simulate dust accumulation");
+        PrintRow("0 - Return");
+        PrintDivider();
+        PrintRow("Profile: '" + state.cooling.GetFanProfile() + "' | Target: " +
+                 FormatDouble(state.cooling.GetTargetTemperatureCelsius()) + " C");
+        PrintRow("Total Airflow: " + FormatDouble(state.cooling.CalculateTotalAirflowCfm()) + " CFM (" +
+                 to_string(state.cooling.GetFanCount()) + " fans)");
+        PrintRow("AIO Pump: " + to_string(state.cooling.GetLiquidCooler().GetPumpRpm()) + " RPM | Coolant: " +
+                 FormatDouble(state.cooling.GetLiquidCooler().GetCoolantTemperatureCelsius()) + " C");
+        PrintRow("Case: " + state.pc_case.GetModelName() + " | Dust: " +
+                 FormatDouble(state.pc_case.GetDustFilterClogPercentage()) + "%");
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                cout << "Available profiles: [Silent, Standard, Performance, Full Speed]\n";
+                string prof = PromptString("Select fan profile", "Performance");
+                state.cooling.ApplyProfile(prof);
+                cout << "SUCCESS: Applied fan profile '" << prof << "' to all fans & AIO pump!\n";
+            } else if (choice == 2) {
+                int rpm = PromptInt("Target pump speed (800 - 3200 RPM)", 2800, 800, 3200);
+                state.cooling.GetLiquidCooler().SetPumpSpeed(rpm);
+                cout << "SUCCESS: AIO pump speed set to " << rpm << " RPM!\n";
+                cout << "New Flow Rate: " << state.cooling.GetLiquidCooler().GetFlowRateLph() << " L/h\n";
+            } else if (choice == 3) {
+                state.pc_case.CleanFilters();
+                cout << "SUCCESS: All case mesh dust filters washed and cleared (0% clog)!\n";
+            } else if (choice == 4) {
+                double dust = PromptDouble("Dust percentage to accumulate (%)", 25.0, 1.0, 100.0);
+                state.pc_case.AccumulateDust(dust);
+                cout << "SUCCESS: Dust accumulated. Total clog: "
+                     << state.pc_case.GetDustFilterClogPercentage() << "%\n";
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
 void ActionSystemSummary(HardwareState& state) {
     cout << "\n\n\n";
-    cout << "===================================================================\n";
-    cout << "                     SYSTEM HARDWARE PASSPORT                      \n";
-    cout << "===================================================================\n\n";
+    cout << "====================================================================================\n";
+    cout << "                              SYSTEM HARDWARE PASSPORT                              \n";
+    cout << "====================================================================================\n\n";
 
     cout << " [1] CPU\n";
     cout << "     Model:       " << state.cpu.GetModelName() << " (" << state.cpu.GetSocketType() << ")\n";
@@ -794,8 +996,38 @@ void ActionSystemSummary(HardwareState& state) {
     cout << "     Audio DSP:   Profile: '" << state.sound_card.GetDSP().GetProfileName() << "'\n";
     cout << "     Speakers:    " << state.speakers.GetSystemName() << " [" << state.speakers.GetPowerWattsRms()
          << " W RMS, Volume: " << state.speakers.GetCurrentVolume() << "%"
-         << (state.speakers.IsMuted() ? " (MUTED)" : "") << "]\n";
-    cout << "===================================================================\n";
+         << (state.speakers.IsMuted() ? " (MUTED)" : "") << "]\n\n";
+
+    cout << " [7] MOTHERBOARD & CHIPSET\n";
+    cout << "     Model:       " << state.motherboard.GetModelName() << " [" << state.motherboard.GetFormFactor() << "]\n";
+    cout << "     BIOS:        " << state.motherboard.GetBiosVersion() << "\n";
+    cout << "     Chipset:     " << state.motherboard.GetChipset().GetModelName() << " ("
+         << state.motherboard.GetChipset().GetPcieLanes() << " PCIe lanes)\n";
+    cout << "     VRM:         " << state.motherboard.GetVRM().GetPhaseCount() << " phases @ "
+         << state.motherboard.GetVRM().GetVCoreVoltage() << " V ("
+         << state.motherboard.GetVRM().GetTemperatureCelsius() << " C)\n";
+    cout << "     PCIe Slots:  " << state.motherboard.GetSlotCount() << " expansion slots installed\n\n";
+
+    cout << " [8] POWER DELIVERY & RAILS\n";
+    cout << "     PSU Model:   " << state.psu.GetModelName() << " (" << state.psu.GetRatedWattage() << " W, "
+         << state.psu.GetEfficiencyRating() << ")\n";
+    cout << "     Total Load:  " << state.psu.CalculateTotalPowerDrawWatts() << " W / "
+         << state.psu.GetRatedWattage() << " W ("
+         << fixed << setprecision(1) << (100.0 * state.psu.CalculateTotalPowerDrawWatts() / (state.psu.GetRatedWattage() ? state.psu.GetRatedWattage() : 1)) << "%)\n";
+    cout << "     +12V Rail:   " << fixed << setprecision(1) << state.psu.GetRail(0).GetCurrentAmperes() << " A ("
+         << state.psu.GetRail(0).CalculateCurrentPowerWatts() << " W)\n";
+    cout << "     Status:      " << (state.psu.IsPoweredOn() ? "System Powered ON" : "Standby") << "\n\n";
+
+    cout << " [9] COOLING & CHASSIS\n";
+    cout << "     Chassis:     " << state.pc_case.GetModelName() << " [" << state.pc_case.GetSupportedFormFactor() << "]\n";
+    cout << "     Filters:     " << fixed << setprecision(1) << state.pc_case.GetDustFilterClogPercentage() << "% dust clog\n";
+    cout << "     Cooling:     Profile: '" << state.cooling.GetFanProfile() << "' ("
+         << state.cooling.CalculateTotalAirflowCfm() << " CFM total airflow)\n";
+    cout << "     Liquid AIO:  " << state.cooling.GetLiquidCooler().GetModelName() << " ("
+         << state.cooling.GetLiquidCooler().GetRadiatorSizeMm() << "mm, "
+         << state.cooling.GetLiquidCooler().GetPumpRpm() << " RPM, Coolant: "
+         << state.cooling.GetLiquidCooler().GetCoolantTemperatureCelsius() << " C)\n";
+    cout << "====================================================================================\n";
 }
 
 void PrintMainMenu() {
@@ -809,8 +1041,11 @@ void PrintMainMenu() {
     PrintRow("6 - Thermal Paste");
     PrintRow("7 - Graphics Card & Display");
     PrintRow("8 - Sound Card & Speakers");
-    PrintRow("9 - System Passport");
-    PrintRow("10 - Reset to Defaults");
+    PrintRow("9 - Motherboard & PCIe");
+    PrintRow("10 - Power Supply & Rails");
+    PrintRow("11 - Cooling System & Case");
+    PrintRow("12 - System Passport");
+    PrintRow("13 - Reset to Defaults");
     PrintRow("0 - Exit");
     PrintDivider();
 }
@@ -855,9 +1090,18 @@ int main() {
             ActionAudio(state);
             break;
         case 9:
+            ActionMotherboard(state);
+            break;
+        case 10:
+            ActionPowerSupply(state);
+            break;
+        case 11:
+            ActionCoolingAndCase(state);
+            break;
+        case 12:
             ActionSystemSummary(state);
             break;
-        case 10: {
+        case 13: {
             string confirm = PromptString("Reset all components to defaults? (yes/no)", "no");
             if (confirm == "yes" || confirm == "y") {
                 state = HardwareState();
