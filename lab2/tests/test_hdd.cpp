@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "HDD.h"
-#include "Exceptions.h"
+#include "StorageOutOfSpaceException.h"
+#include "StorageBadSectorException.h"
 
 TEST(HDDTest, ConstructorAndGetters) {
     HDD hdd("Seagate Barracuda", 7200, 2000, 256);

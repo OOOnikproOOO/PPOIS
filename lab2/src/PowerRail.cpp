@@ -6,7 +6,7 @@
  */
 
 #include "PowerRail.h"
-#include "Exceptions.h"
+#include "PowerSupplyOverloadException.h"
 
 PowerRail::PowerRail(const std::string& rail_name, double nominal_voltage, double current_amperes, double max_amperes) :
     rail_name_(rail_name), nominal_voltage_(nominal_voltage), current_amperes_(current_amperes), max_amperes_(max_amperes) {}

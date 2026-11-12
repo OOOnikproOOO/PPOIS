@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "ComputerCase.h"
-#include "Exceptions.h"
+#include "ThermalThrottlingException.h"
 
 TEST(ComputerCaseTest, ConstructorAndGetters) {
     ComputerCase ccase("NZXT H510", "ATX", 381, 165, 10.0);

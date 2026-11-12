@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "GPUCore.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(GPUCoreTest, ConstructorAndGetters) {
     GPUCore core(0, 2400);

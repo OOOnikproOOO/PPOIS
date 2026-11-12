@@ -6,7 +6,10 @@
  */
 
 #include "RAM.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
+#include "IncompatibleMemoryException.h"
+#include "MemoryAllocationException.h"
 
 RAM::RAM(int max_slots) : max_slots_(max_slots), sticks_(), channel_mode_(1), total_allocated_mb_(0) {}
 

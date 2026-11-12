@@ -6,7 +6,7 @@
  */
 
 #include "RAMStick.h"
-#include "Exceptions.h"
+#include "MemoryAllocationException.h"
 
 RAMStick::RAMStick(const std::string& serial_number, int capacity_mb, int frequency_mhz, const std::string& generation, const RAMTiming& timings) :
     serial_number_(serial_number), capacity_mb_(capacity_mb), frequency_mhz_(frequency_mhz), generation_(generation), timings_(timings), xmp_enabled_(false), used_mb_(0) {}

@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "VRAM.h"
-#include "Exceptions.h"
+#include "MemoryAllocationException.h"
 
 TEST(VRAMTest, ConstructorAndGetters) {
     VRAM vram(16384, 256, "GDDR6");

@@ -6,7 +6,8 @@
  */
 
 #include "CPU.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 CPU::CPU(const std::string& model_name, const std::string& socket_type, int tdp_watts, int l3_cache_size_kb) : 
     model_name_(model_name), socket_type_(socket_type), tdp_watts_(tdp_watts), cores_(), l3_cache_(3, l3_cache_size_kb, 64), is_overclocked_(false) {}

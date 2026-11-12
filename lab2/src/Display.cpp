@@ -6,7 +6,7 @@
  */
 
 #include "Display.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 Display::Display(const std::string& model, int resolution_width, int resolution_height, int refresh_rate_hz) :
     model_(model), resolution_width_(resolution_width), resolution_height_(resolution_height), refresh_rate_hz_(refresh_rate_hz), is_powered_on_(true) {}

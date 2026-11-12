@@ -6,7 +6,9 @@
  */
 
 #include "GPUCore.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "ThermalThrottlingException.h"
+#include "OverheatingException.h"
 
 GPUCore::GPUCore(int core_id, int clock_mhz) : core_id_(core_id), clock_mhz_(clock_mhz), temperature_celsius_(38.0), load_percentage_(0.0) {}
 
@@ -32,7 +34,7 @@ void GPUCore::RenderFrames(int frame_count) {
     temperature_celsius_ += frame_count * 0.08;
 
     if (temperature_celsius_ > 95.0)
-        throw OverheatingException("GPU Core temperature exceeded critical junction limit (95 °C).");
+        throw OverheatingException("GPU Core temperature exceeded critical junction limit (95 В°C).");
     
     if (temperature_celsius_ > 83.0)
         throw ThermalThrottlingException("GPU Core thermal throttling engaged due to high heat.");

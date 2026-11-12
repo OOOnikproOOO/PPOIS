@@ -6,7 +6,8 @@
  */
 
 #include "PowerSupply.h"
-#include "Exceptions.h"
+#include "DeviceNotFoundException.h"
+#include "PowerSupplyOverloadException.h"
 
 PowerSupply::PowerSupply(const std::string& model_name, int rated_wattage, const std::string& efficiency_rating, bool is_powered_on) :
     model_name_(model_name), rated_wattage_(rated_wattage), efficiency_rating_(efficiency_rating), is_powered_on_(is_powered_on) {}

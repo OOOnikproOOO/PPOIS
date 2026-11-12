@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "RAMStick.h"
-#include "Exceptions.h"
+#include "MemoryAllocationException.h"
 
 TEST(RAMStickTest, ConstructorAndGetters) {
     RAMStick stick("KF432C16BB/16", 16384, 3200, "DDR4");

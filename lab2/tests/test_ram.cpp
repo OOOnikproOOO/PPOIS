@@ -8,7 +8,10 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "RAM.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
+#include "IncompatibleMemoryException.h"
+#include "MemoryAllocationException.h"
 
 TEST(RAMTest, ConstructorAndDefaultState) {
     RAM ram(4);

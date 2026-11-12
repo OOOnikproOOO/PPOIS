@@ -6,7 +6,9 @@
  */
 
 #include "Motherboard.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
+#include "POSTFailureException.h"
 
 Motherboard::Motherboard(const std::string& model_name, const std::string& form_factor, const std::string& bios_version, const VRM& vrm, const Chipset& chipset) :
     model_name_(model_name), form_factor_(form_factor), bios_version_(bios_version), vrm_(vrm), chipset_(chipset) {}
@@ -37,7 +39,7 @@ void Motherboard::FlashBios(const std::string& new_version) {
 
 bool Motherboard::PerformPOST() const {
     if (vrm_.GetTemperatureCelsius() > 105.0) 
-        throw POSTFailureException("Motherboard POST failure: VRM temperature critical (> 105 °C).");
+        throw POSTFailureException("Motherboard POST failure: VRM temperature critical (> 105 В°C).");
     return true;
 }
 

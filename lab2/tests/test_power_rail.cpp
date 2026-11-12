@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "PowerRail.h"
-#include "Exceptions.h"
+#include "PowerSupplyOverloadException.h"
 
 TEST(PowerRailTest, ConstructorAndGetters) {
     PowerRail rail("+12V", 12.0, 5.0, 70.0);

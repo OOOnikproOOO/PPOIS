@@ -6,7 +6,7 @@
  */
 
 #include "Chipset.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 Chipset::Chipset(const std::string& model_name, int pcie_lanes, int sata_ports, int usb_ports) :
     model_name_(model_name), pcie_lanes_(pcie_lanes), sata_ports_(sata_ports), usb_ports_(usb_ports) {}

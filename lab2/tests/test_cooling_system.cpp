@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "CoolingSystem.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 TEST(CoolingSystemTest, ConstructorAndGetters) {
     CoolingSystem cooling("Standard", 65.0);

@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "PCIeSlot.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 TEST(PCIeSlotTest, ConstructorAndGetters) {
     PCIeSlot slot(0, "PCIe 5.0", 16);

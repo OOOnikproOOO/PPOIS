@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "AudioDSP.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(AudioDSPTest, ConstructorAndGetters) {
     AudioDSP dsp("Flat", 2, 0.0);

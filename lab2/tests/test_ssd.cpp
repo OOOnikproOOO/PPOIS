@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "SSD.h"
-#include "Exceptions.h"
+#include "StorageOutOfSpaceException.h"
 
 TEST(SSDTest, ConstructorAndGetters) {
     SSD ssd("Samsung 990 PRO", "NVMe PCIe 4.0", 2000, 1200.0);

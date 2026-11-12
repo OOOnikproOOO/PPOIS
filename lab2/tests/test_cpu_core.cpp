@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "CPUCore.h"
-#include "Exceptions.h"
+#include "ThermalThrottlingException.h"
+#include "OverheatingException.h"
 
 TEST(CPUCoreTest, ConstructorAndGetters) {
     CPUCore core(0, 3600, true);

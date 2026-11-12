@@ -17,6 +17,8 @@
 - **Материнская плата и шины расширения:** модуль регулятора напряжения (VRM), чипсет (Chipset), разъемы расширения (PCIeSlot), системная плата (Motherboard).
 - **Подсистема электропитания:** шины постоянного тока (PowerRail), блок питания (PowerSupply).
 - **Подсистема охлаждения и корпус:** вентиляторы охлаждения (CoolingFan), СЖО / водяное охлаждение (LiquidCooler), комплексная система охлаждения (CoolingSystem), компьютерный корпус (ComputerCase).
+- **Системное ПО, загрузка и время:** конфигурация прошивки (BIOSSettings), загрузчик ОС (Bootloader), системные часы и аптайм (SystemClock).
+- **Операционная система и файловая система:** файлы (FileEntry), каталоги (DirectoryNode), файловая система (FileSystem), процессы (OSProcess), планировщик задач (ProcessScheduler), драйверы устройств (DeviceDriver), операционная система (OperatingSystem).
 
 ---
 
@@ -25,7 +27,18 @@
 ```text
 lab2/
 ├── include/                     # Заголовочные файлы классов (.h)
-│   ├── Exceptions.h             # 12 собственных классов исключений
+│   ├── ComputerException.h            # Базовое исключение предметной области
+│   ├── DeviceNotFoundException.h      # Исключение: устройство/элемент не найдены
+│   ├── IncompatibleSocketException.h  # Исключение: несовместимость сокета CPU
+│   ├── IncompatibleMemoryException.h  # Исключение: несовместимость памяти RAM
+│   ├── ThermalThrottlingException.h   # Исключение: троттлинг от перегрева
+│   ├── OverheatingException.h         # Исключение: критический перегрев (TJMax)
+│   ├── PowerSupplyOverloadException.h # Исключение: перегрузка блока питания
+│   ├── VoltageInstabilityException.h  # Исключение: нестабильность напряжения
+│   ├── StorageOutOfSpaceException.h   # Исключение: нехватка места на носителе
+│   ├── StorageBadSectorException.h    # Исключение: сбойный сектор накопителя
+│   ├── MemoryAllocationException.h    # Исключение: ошибка выделения памяти
+│   ├── POSTFailureException.h         # Исключение: сбой самотестирования POST
 │   ├── CPUCache.h               # Кэш-память процессора (L1, L2, L3)
 │   ├── CPUCore.h                # Физическое ядро процессора
 │   ├── CPU.h                    # Центральный процессор
@@ -55,7 +68,17 @@ lab2/
 │   ├── CoolingFan.h             # Вентилятор охлаждения с PWM
 │   ├── LiquidCooler.h           # СЖО (водяное охлаждение / AIO)
 │   ├── CoolingSystem.h          # Комплексная система терморегуляции
-│   └── ComputerCase.h           # Компьютерный корпус
+│   ├── ComputerCase.h           # Компьютерный корпус
+│   ├── BIOSSettings.h             # Настройки прошивки BIOS/UEFI
+│   ├── Bootloader.h               # Системный загрузчик ОС
+│   ├── SystemClock.h              # Часы реального времени и счетчик аптайма
+│   ├── FileEntry.h                # Файл с текстовыми данными и правами доступа
+│   ├── DirectoryNode.h            # Каталог иерархии файловой системы
+│   ├── FileSystem.h               # Файловая система и управление разделом
+│   ├── OSProcess.h                # Процесс операционной системы
+│   ├── ProcessScheduler.h         # Планировщик задач и процессов ОС
+│   ├── DeviceDriver.h             # Драйвер аппаратного устройства
+│   └── OperatingSystem.h          # Операционная система
 ├── src/                         # Реализация логики классов (.cpp)
 ├── app/                         # Консольный интерфейс пользователя (CLI)
 │   └── main.cpp
@@ -102,6 +125,16 @@ lab2/
 | 28 | LiquidCooler | 5 | 4 | — |
 | 29 | CoolingSystem | 4 | 4 | LiquidCooler, CoolingFan |
 | 30 | ComputerCase | 5 | 5 | — |
+| 31 | BIOSSettings | 4 | 6 | — |
+| 32 | Bootloader | 4 | 4 | BIOSSettings |
+| 33 | SystemClock | 3 | 5 | — |
+| 34 | FileEntry | 4 | 5 | — |
+| 35 | DirectoryNode | 3 | 7 | FileEntry |
+| 36 | FileSystem | 3 | 9 | DirectoryNode |
+| 37 | OSProcess | 4 | 5 | — |
+| 38 | ProcessScheduler | 3 | 5 | OSProcess |
+| 39 | DeviceDriver | 4 | 4 | — |
+| 40 | OperatingSystem | 7 | 5 | Bootloader, FileSystem, ProcessScheduler, SystemClock, DeviceDriver |
 
 ---
 
@@ -126,12 +159,12 @@ lab2/
 
 | Показатель | Реализовано на данный момент | Требование к проекту |
 |---|---|---|
-| Классы предметной области | 30 (+ 12 классов исключений) | $\ge 50$ |
-| Поля суммарно | 150 полей | $\ge 150$ ✅ |
-| Содержательные методы-поведения | 110 поведений (140 с учётом конструкторов) | $\ge 100$ ✅ |
-| Ассоциации между классами | 18 ассоциаций | $\ge 30$ |
+| Классы предметной области | 40 (+ 12 классов исключений) | $\ge 50$ |
+| Поля суммарно | 188 полей | $\ge 150$ ✅ |
+| Содержательные методы-поведения | 155 поведений (195 с учётом конструкторов) | $\ge 100$ ✅ |
+| Ассоциации между классами | 27 ассоциаций | $\ge 30$ |
 | Собственные исключения | 12 исключений | $\ge 12$ ✅ |
-| Unit-тесты (GoogleTest) | 147 тестов (в 31 файле) | $\ge 90\%$ покрытие ✅ |
+| Unit-тесты (GoogleTest) | 175 тестов (в 41 файле) | $\ge 90\%$ покрытие ✅ |
 
 ---
 

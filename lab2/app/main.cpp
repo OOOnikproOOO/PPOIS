@@ -26,7 +26,8 @@
 #include "PowerSupply.h"
 #include "CoolingSystem.h"
 #include "ComputerCase.h"
-#include "Exceptions.h"
+#include "OperatingSystem.h"
+#include "ComputerException.h"
 
 using namespace std;
 
@@ -191,6 +192,7 @@ struct HardwareState {
     PowerSupply psu;
     CoolingSystem cooling;
     ComputerCase pc_case;
+    OperatingSystem os;
 
     HardwareState() : cpu("AMD Ryzen 7 7800X3D", "AM5", 120, 98304), ram(4), ssd("Samsung 990 PRO", "NVMe PCIe 4.0", 2000, 1200.0), hdd("Seagate IronWolf Pro", 7200, 4000, 256),
           controller("PCIe NVMe Controller"), paste("Noctua NT-H2", 9.0, 50000.0, 0.04), gpu("NVIDIA GeForce RTX 4080", 320, GPUCore(0, 2200), VRAM(16384, 256, "GDDR6X")),
@@ -198,7 +200,8 @@ struct HardwareState {
           motherboard("ASUS ROG STRIX B650-E", "ATX", "v1.40", VRM(16, 1.25, 38.0, 93.0), Chipset("AMD B650", 36, 4, 10)),
           psu("Corsair RM850x", 850, "80 PLUS Gold", true),
           cooling("Standard", 65.0, LiquidCooler("Arctic Liquid Freezer II 360", 360, 2400, 31.0, 150.0)),
-          pc_case("Fractal Design Meshify 2", "ATX", 450, 185, 8.0) {
+          pc_case("Fractal Design Meshify 2", "ATX", 450, 185, 8.0),
+          os("Ubuntu Linux 24.04 LTS", Bootloader("GRUB2", 5, false, BIOSSettings("UEFI", true, true, false)), FileSystem("ext4", 65536), ProcessScheduler("CFS", 64), SystemClock(0, 3, true)) {
         cpu.AddCore(CPUCore(0, 4200, true));
         cpu.AddCore(CPUCore(1, 4200, true));
         cpu.AddCore(CPUCore(2, 4200, true));
@@ -233,6 +236,17 @@ struct HardwareState {
         cooling.AddFan(CoolingFan("Intake Front #1", 140, 1000, 1800, 50));
         cooling.AddFan(CoolingFan("Intake Front #2", 140, 1000, 1800, 50));
         cooling.AddFan(CoolingFan("Exhaust Rear", 120, 1100, 2000, 50));
+
+        os.RegisterDriver(DeviceDriver("nvidia-drm", "550.54", "GPU", false));
+        os.RegisterDriver(DeviceDriver("nvme-core", "2.4.0", "Storage", false));
+        os.RegisterDriver(DeviceDriver("snd_hda_intel", "1.0.2", "Audio", false));
+        os.Boot();
+
+        os.GetScheduler().LaunchProcess(OSProcess(1, "systemd", 64, true));
+        os.GetScheduler().LaunchProcess(OSProcess(102, "bash", 24, true));
+        os.GetFileSystem().CreateDirectory("/", "docs");
+        os.GetFileSystem().CreateFile("/", "readme.txt", "Welcome to PPOIS PC Simulator!");
+        os.GetFileSystem().CreateFile("/docs", "notes.txt", "Lab2 Computer System");
     }
 };
 
@@ -943,6 +957,177 @@ void ActionCoolingAndCase(HardwareState& state) {
     }
 }
 
+void ActionBiosAndBoot(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("BIOS, Bootloader & Clock");
+        PrintRow("1 - Switch BIOS Boot Mode (UEFI / Legacy)");
+        PrintRow("2 - Toggle Secure Boot");
+        PrintRow("3 - Toggle XMP profile in BIOS");
+        PrintRow("4 - Boot / Verify Operating System");
+        PrintRow("5 - Shutdown Operating System");
+        PrintRow("6 - Advance uptime clock (Tick seconds)");
+        PrintRow("0 - Return");
+        PrintDivider();
+        BIOSSettings& bios = state.os.GetBootloader().GetBiosSettings();
+        PrintRow("OS State: " + string(state.os.IsBooted() ? "BOOTED" : "HALTED") +
+                 " | Mode: " + bios.GetBootMode());
+        PrintRow("SecureBoot: " + string(bios.IsSecureBootEnabled() ? "ON" : "OFF") +
+                 " | XMP: " + string(bios.IsXmpEnabled() ? "ON" : "OFF"));
+        PrintRow("Loader: " + state.os.GetBootloader().GetBootloaderName() +
+                 " | Verified: " + string(state.os.GetBootloader().IsVerified() ? "YES" : "NO"));
+        PrintRow("Uptime: " + state.os.GetClock().FormatUptime() + " (UTC+" +
+                 to_string(state.os.GetClock().GetTimezoneOffsetHours()) + ")");
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                string next_mode = (bios.GetBootMode() == "UEFI") ? "Legacy" : "UEFI";
+                bios.SetBootMode(next_mode);
+                state.os.GetBootloader().ResetVerification();
+                cout << "SUCCESS: BIOS Boot Mode switched to " << next_mode << ".\n";
+            } else if (choice == 2) {
+                bios.ToggleSecureBoot(!bios.IsSecureBootEnabled());
+                cout << "SUCCESS: Secure Boot is now " << (bios.IsSecureBootEnabled() ? "ENABLED" : "DISABLED") << ".\n";
+            } else if (choice == 3) {
+                bios.ToggleXmp(!bios.IsXmpEnabled());
+                cout << "SUCCESS: BIOS XMP profile is now " << (bios.IsXmpEnabled() ? "ENABLED" : "DISABLED") << ".\n";
+            } else if (choice == 4) {
+                state.os.Boot();
+                cout << "SUCCESS: Bootloader verified and OS booted!\n";
+            } else if (choice == 5) {
+                state.os.Shutdown();
+                cout << "SUCCESS: Operating system shut down cleanly.\n";
+            } else if (choice == 6) {
+                long long secs = PromptInt("Seconds to advance uptime clock", 120, 1, 86400);
+                state.os.AdvanceUptime(secs);
+                cout << "SUCCESS: Uptime is now " << state.os.GetClock().FormatUptime() << ".\n";
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
+void ActionOsAndFileSystem(HardwareState& state) {
+    while (true) {
+        cout << "\n\n\n";
+        PrintHeader("OS Processes & File System");
+        PrintRow("1 - List directory contents (files & folders)");
+        PrintRow("2 - Create new file (with text)");
+        PrintRow("3 - Read text from file");
+        PrintRow("4 - Overwrite existing file text");
+        PrintRow("5 - Delete file");
+        PrintRow("6 - Create folder");
+        PrintRow("7 - Delete folder");
+        PrintRow("8 - Launch OS process");
+        PrintRow("9 - Terminate OS process by PID");
+        PrintRow("10 - Toggle device driver (Load / Unload)");
+        PrintRow("0 - Return");
+        PrintDivider();
+        FileSystem& fs = state.os.GetFileSystem();
+        ProcessScheduler& sched = state.os.GetScheduler();
+        int loaded_drivers = 0;
+        for (int i = 0; i < state.os.GetDriverCount(); i++) {
+            if (state.os.GetDriver(i).IsLoaded()) loaded_drivers++;
+        }
+        PrintRow("OS: " + state.os.GetOsName() + " [" + string(state.os.IsBooted() ? "UP" : "DOWN") + "]");
+        PrintRow("FS (" + fs.GetFsType() + "): " + to_string(fs.GetUsedSpaceBytes()) + " / " +
+                 to_string(fs.GetTotalCapacityBytes()) + " B (" + to_string(fs.GetRootDirectory().CountTotalFiles()) + " files)");
+        PrintRow("Tasks (" + sched.GetPolicy() + "): " + to_string(sched.GetProcessCount()) +
+                 " procs (" + to_string(sched.CalculateTotalMemoryUsageMb()) + " MB RAM)");
+        PrintRow("Drivers loaded: " + to_string(loaded_drivers) + " / " + to_string(state.os.GetDriverCount()));
+        PrintDivider();
+
+        int choice = PromptChoice();
+        if (choice == 0) break;
+
+        try {
+            if (choice == 1) {
+                string path = PromptString("Directory path", "/");
+                const DirectoryNode& dir = fs.NavigateToDirectory(path);
+                cout << "\n--- Contents of '" << path << "' ---\n";
+                for (int i = 0; i < dir.GetSubdirectoryCount(); i++)
+                    cout << "  [DIR]  " << dir.GetSubdirectory(i).GetName() << "\n";
+                for (int i = 0; i < dir.GetFileCount(); i++)
+                    cout << "  [FILE] " << dir.GetFile(i).GetName() << " (" << dir.GetFile(i).GetSizeBytes() << " B)\n";
+                if (dir.GetSubdirectoryCount() == 0 && dir.GetFileCount() == 0)
+                    cout << "  (empty directory)\n";
+            } else if (choice == 2) {
+                string path = PromptString("Target directory path", "/");
+                string name = PromptString("New file name", "hello.txt");
+                string text = PromptString("Text content to write", "Hello World!");
+                fs.CreateFile(path, name, text);
+                cout << "SUCCESS: File '" << name << "' created (" << text.size() << " bytes).\n";
+            } else if (choice == 3) {
+                string path = PromptString("Directory path", "/");
+                string name = PromptString("File name to read", "readme.txt");
+                string text = fs.ReadFile(path, name);
+                cout << "\n--- Content of '" << name << "' ---\n" << text << "\n";
+            } else if (choice == 4) {
+                string path = PromptString("Directory path", "/");
+                string name = PromptString("File name to overwrite", "readme.txt");
+                string text = PromptString("New text content", "Updated content!");
+                fs.WriteFile(path, name, text);
+                cout << "SUCCESS: Updated '" << name << "' (" << text.size() << " bytes).\n";
+            } else if (choice == 5) {
+                string path = PromptString("Directory path", "/");
+                string name = PromptString("File name to delete", "hello.txt");
+                fs.DeleteFile(path, name);
+                cout << "SUCCESS: File '" << name << "' deleted.\n";
+            } else if (choice == 6) {
+                string parent = PromptString("Parent directory path", "/");
+                string name = PromptString("New folder name", "projects");
+                fs.CreateDirectory(parent, name);
+                cout << "SUCCESS: Folder '" << name << "' created.\n";
+            } else if (choice == 7) {
+                string parent = PromptString("Parent directory path", "/");
+                string name = PromptString("Folder name to delete", "projects");
+                fs.DeleteDirectory(parent, name);
+                cout << "SUCCESS: Folder '" << name << "' deleted.\n";
+            } else if (choice == 8) {
+                int pid = PromptInt("New Process PID", 200, 1, 65535);
+                string name = PromptString("Process name", "compiler");
+                int mem = PromptInt("Memory allocation (MB)", 256, 1, 16384);
+                sched.LaunchProcess(OSProcess(pid, name, mem, true));
+                cout << "SUCCESS: Launched PID " << pid << " ('" << name << "', " << mem << " MB).\n";
+            } else if (choice == 9) {
+                cout << "Active processes:\n";
+                for (int i = 0; i < sched.GetProcessCount(); i++)
+                    cout << "  " << sched.GetProcess(i) << "\n";
+                int pid = PromptInt("PID to terminate", 102, 1, 65535);
+                sched.TerminateProcess(pid);
+                cout << "SUCCESS: Process PID " << pid << " terminated.\n";
+            } else if (choice == 10) {
+                for (int i = 0; i < state.os.GetDriverCount(); i++)
+                    cout << "  [" << i << "] " << state.os.GetDriver(i) << "\n";
+                int idx = PromptInt("Driver index", 0, 0, state.os.GetDriverCount() - 1);
+                DeviceDriver& drv = state.os.GetDriver(idx);
+                if (drv.IsLoaded()) {
+                    drv.Unload();
+                    cout << "SUCCESS: Driver '" << drv.GetDriverName() << "' unloaded.\n";
+                } else {
+                    drv.Load();
+                    cout << "SUCCESS: Driver '" << drv.GetDriverName() << "' loaded.\n";
+                }
+            } else {
+                cout << "Error! Invalid selection! Please enter a valid menu number.\n";
+            }
+        } catch (const ComputerException& ex) {
+            cout << "\n[HARDWARE EXCEPTION CAUGHT] " << ex.what() << "\n";
+        } catch (const exception& ex) {
+            cout << "\n[ERROR] " << ex.what() << "\n";
+        }
+    }
+}
+
 void ActionSystemSummary(HardwareState& state) {
     cout << "\n\n\n";
     cout << "====================================================================================\n";
@@ -1026,7 +1211,28 @@ void ActionSystemSummary(HardwareState& state) {
     cout << "     Liquid AIO:  " << state.cooling.GetLiquidCooler().GetModelName() << " ("
          << state.cooling.GetLiquidCooler().GetRadiatorSizeMm() << "mm, "
          << state.cooling.GetLiquidCooler().GetPumpRpm() << " RPM, Coolant: "
-         << state.cooling.GetLiquidCooler().GetCoolantTemperatureCelsius() << " C)\n";
+         << state.cooling.GetLiquidCooler().GetCoolantTemperatureCelsius() << " C)\n\n";
+
+    cout << " [10] BIOS, BOOTLOADER & CLOCK\n";
+    cout << "     Boot Mode:   " << state.os.GetBootloader().GetBiosSettings().GetBootMode()
+         << " (SecureBoot: " << (state.os.GetBootloader().GetBiosSettings().IsSecureBootEnabled() ? "ON" : "OFF")
+         << ", XMP: " << (state.os.GetBootloader().GetBiosSettings().IsXmpEnabled() ? "ON" : "OFF") << ")\n";
+    cout << "     Bootloader:  " << state.os.GetBootloader().GetBootloaderName()
+         << " (Verified: " << (state.os.GetBootloader().IsVerified() ? "YES" : "NO") << ")\n";
+    cout << "     Clock:       Uptime " << state.os.GetClock().FormatUptime()
+         << " (UTC+" << state.os.GetClock().GetTimezoneOffsetHours() << ")\n\n";
+
+    cout << " [11] OPERATING SYSTEM & FILE SYSTEM\n";
+    cout << "     OS:          " << state.os.GetOsName()
+         << " [" << (state.os.IsBooted() ? "BOOTED" : "HALTED") << "]\n";
+    cout << "     Processes:   " << state.os.GetScheduler().GetProcessCount() << " active ("
+         << state.os.GetScheduler().CalculateTotalMemoryUsageMb() << " MB RAM, "
+         << state.os.GetScheduler().GetPolicy() << ")\n";
+    cout << "     Drivers:     " << state.os.GetDriverCount() << " registered\n";
+    cout << "     FileSystem:  " << state.os.GetFileSystem().GetFsType() << " ("
+         << state.os.GetFileSystem().GetUsedSpaceBytes() << " / "
+         << state.os.GetFileSystem().GetTotalCapacityBytes() << " bytes, "
+         << state.os.GetFileSystem().GetRootDirectory().CountTotalFiles() << " files)\n";
     cout << "====================================================================================\n";
 }
 
@@ -1044,8 +1250,10 @@ void PrintMainMenu() {
     PrintRow("9 - Motherboard & PCIe");
     PrintRow("10 - Power Supply & Rails");
     PrintRow("11 - Cooling System & Case");
-    PrintRow("12 - System Passport");
-    PrintRow("13 - Reset to Defaults");
+    PrintRow("12 - BIOS, Bootloader & Clock");
+    PrintRow("13 - OS Processes & File System");
+    PrintRow("14 - System Passport");
+    PrintRow("15 - Reset to Defaults");
     PrintRow("0 - Exit");
     PrintDivider();
 }
@@ -1099,9 +1307,15 @@ int main() {
             ActionCoolingAndCase(state);
             break;
         case 12:
+            ActionBiosAndBoot(state);
+            break;
+        case 13:
+            ActionOsAndFileSystem(state);
+            break;
+        case 14:
             ActionSystemSummary(state);
             break;
-        case 13: {
+        case 15: {
             string confirm = PromptString("Reset all components to defaults? (yes/no)", "no");
             if (confirm == "yes" || confirm == "y") {
                 state = HardwareState();

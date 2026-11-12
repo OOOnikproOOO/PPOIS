@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "Chipset.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(ChipsetTest, ConstructorAndGetters) {
     Chipset chipset("Intel Z790", 40, 8, 12);

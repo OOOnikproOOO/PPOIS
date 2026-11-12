@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "StorageController.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(StorageControllerTest, ConstructorAndGetters) {
     StorageController controller("Intel RST NVMe");

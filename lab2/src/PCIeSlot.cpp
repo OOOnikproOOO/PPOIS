@@ -6,7 +6,8 @@
  */
 
 #include "PCIeSlot.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 PCIeSlot::PCIeSlot(int slot_index, const std::string& generation, int lane_width, bool is_occupied, const std::string& installed_device_name) :
     slot_index_(slot_index), generation_(generation), lane_width_(lane_width), is_occupied_(is_occupied), installed_device_name_(installed_device_name) {}

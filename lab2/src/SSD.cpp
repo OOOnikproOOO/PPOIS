@@ -6,7 +6,7 @@
  */
 
 #include "SSD.h"
-#include "Exceptions.h"
+#include "StorageOutOfSpaceException.h"
 
 SSD::SSD(const std::string& model, const std::string& interface_type, int capacity_gb, double tbw_resource_tb) :
     model_(model), interface_type_(interface_type), capacity_gb_(capacity_gb), used_gb_(0), tbw_resource_tb_(tbw_resource_tb), tbw_written_tb_(0.0), health_percentage_(100) {}

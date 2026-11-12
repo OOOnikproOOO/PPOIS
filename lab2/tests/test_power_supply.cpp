@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "PowerSupply.h"
-#include "Exceptions.h"
+#include "DeviceNotFoundException.h"
+#include "PowerSupplyOverloadException.h"
 
 TEST(PowerSupplyTest, ConstructorAndGetters) {
     PowerSupply psu("Seasonic Focus GX-750", 750, "80 PLUS Gold", false);

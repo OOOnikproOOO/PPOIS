@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "CPU.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 TEST(CPUTest, ConstructorAndDefaultState) {
     CPU cpu("AMD Ryzen 7 7800X3D", "AM5", 120, 98304);

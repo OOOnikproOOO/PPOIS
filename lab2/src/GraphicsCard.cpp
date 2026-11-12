@@ -6,7 +6,7 @@
  */
 
 #include "GraphicsCard.h"
-#include "Exceptions.h"
+#include "DeviceNotFoundException.h"
 
 GraphicsCard::GraphicsCard(const std::string& model_name, int base_power_watts, const GPUCore& core, const VRAM& vram) :
     model_name_(model_name), power_draw_watts_(base_power_watts), gpu_core_(core), vram_(vram), video_ports_() {}

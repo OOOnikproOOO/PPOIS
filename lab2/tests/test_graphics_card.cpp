@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "GraphicsCard.h"
-#include "Exceptions.h"
+#include "DeviceNotFoundException.h"
+#include "MemoryAllocationException.h"
 
 TEST(GraphicsCardTest, ConstructorAndGetters) {
     GraphicsCard gpu("GeForce RTX 4080", 320);

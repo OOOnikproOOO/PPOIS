@@ -6,7 +6,7 @@
  */
 
 #include "AudioDSP.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 AudioDSP::AudioDSP(const std::string& profile_name, int latency_ms, double gain_db) :
     profile_name_(profile_name), latency_ms_(latency_ms), gain_db_(gain_db), equalizer_enabled_(true) {}

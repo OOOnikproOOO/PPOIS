@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "SpeakerSystem.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(SpeakerSystemTest, ConstructorAndGetters) {
     SpeakerSystem spk("Edifier R1280DB", 42, 40);

@@ -6,7 +6,7 @@
  */
 
 #include "ComputerCase.h"
-#include "Exceptions.h"
+#include "ThermalThrottlingException.h"
 
 ComputerCase::ComputerCase(const std::string& model_name, const std::string& supported_form_factor, int max_gpu_length_mm, int max_cpu_cooler_height_mm, double dust_filter_clog_percentage) :
     model_name_(model_name), supported_form_factor_(supported_form_factor), max_gpu_length_mm_(max_gpu_length_mm), max_cpu_cooler_height_mm_(max_cpu_cooler_height_mm), dust_filter_clog_percentage_(dust_filter_clog_percentage) {}

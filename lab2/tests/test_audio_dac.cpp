@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "AudioDAC.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(AudioDACTest, ConstructorAndGetters) {
     AudioDAC dac(48000, 24, 115.0);

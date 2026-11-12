@@ -6,7 +6,7 @@
  */
 
 #include "SpeakerSystem.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 SpeakerSystem::SpeakerSystem(const std::string& system_name, int power_watts_rms, int initial_volume) :
     system_name_(system_name), power_watts_rms_(power_watts_rms), current_volume_(initial_volume), is_muted_(false) {}

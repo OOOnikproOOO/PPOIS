@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "Display.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 TEST(DisplayTest, ConstructorAndGetters) {
     Display display("Dell UltraSharp", 3840, 2160, 60);

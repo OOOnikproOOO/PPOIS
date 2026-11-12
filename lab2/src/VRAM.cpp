@@ -6,7 +6,7 @@
  */
 
 #include "VRAM.h"
-#include "Exceptions.h"
+#include "MemoryAllocationException.h"
 
 VRAM::VRAM(int capacity_mb, int bus_width_bits, const std::string& memory_type) :
     capacity_mb_(capacity_mb), bus_width_bits_(bus_width_bits), used_mb_(0), memory_type_(memory_type) {}

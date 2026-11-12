@@ -6,7 +6,8 @@
  */
 
 #include "SoundCard.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 SoundCard::SoundCard(const std::string& card_model, int channel_count, const AudioDAC& dac, const AudioDSP& dsp) :
     card_model_(card_model), channel_count_(channel_count), dac_(dac), dsp_(dsp), jacks_() {}

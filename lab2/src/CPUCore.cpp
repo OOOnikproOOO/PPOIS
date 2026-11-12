@@ -6,7 +6,8 @@
  */
 
 #include "CPUCore.h"
-#include "Exceptions.h"
+#include "ThermalThrottlingException.h"
+#include "OverheatingException.h"
 
 namespace {
 constexpr double kIdleTemperature = 35.0;

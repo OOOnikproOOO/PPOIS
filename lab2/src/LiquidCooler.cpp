@@ -6,7 +6,8 @@
  */
 
 #include "LiquidCooler.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "OverheatingException.h"
 
 LiquidCooler::LiquidCooler(const std::string& model_name, int radiator_size_mm, int pump_rpm, double coolant_temperature_celsius, double flow_rate_lph) :
     model_name_(model_name), radiator_size_mm_(radiator_size_mm), pump_rpm_(pump_rpm), coolant_temperature_celsius_(coolant_temperature_celsius), flow_rate_lph_(flow_rate_lph) {}
@@ -38,7 +39,7 @@ void LiquidCooler::AbsorbHeat(double heat_watts) {
         return;
     coolant_temperature_celsius_ += heat_watts * 0.04;
     if (coolant_temperature_celsius_ > 65.0) 
-        throw OverheatingException("Coolant temperature critical (> 65 °C). AIO loop failure.");
+        throw OverheatingException("Coolant temperature critical (> 65 В°C). AIO loop failure.");
 }
 
 void LiquidCooler::DissipateHeat(double delta_celsius) {

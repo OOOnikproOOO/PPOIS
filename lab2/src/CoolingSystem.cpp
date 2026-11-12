@@ -6,7 +6,8 @@
  */
 
 #include "CoolingSystem.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
 
 CoolingSystem::CoolingSystem(const std::string& fan_profile, double target_temperature_celsius, const LiquidCooler& liquid_cooler) :
     fan_profile_(fan_profile), target_temperature_celsius_(target_temperature_celsius), liquid_cooler_(liquid_cooler) {}

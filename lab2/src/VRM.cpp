@@ -6,7 +6,8 @@
  */
 
 #include "VRM.h"
-#include "Exceptions.h"
+#include "OverheatingException.h"
+#include "VoltageInstabilityException.h"
 
 VRM::VRM(int phase_count, double vcore_voltage, double temperature_celsius, double efficiency_percentage) :
     phase_count_(phase_count), vcore_voltage_(vcore_voltage), temperature_celsius_(temperature_celsius), efficiency_percentage_(efficiency_percentage) {}
@@ -37,7 +38,7 @@ void VRM::SupplyCurrent(double current_amperes) {
     double thermal_delta = current_amperes * (1.0 - efficiency_percentage_ / 100) * 0.8;
     temperature_celsius_ += thermal_delta;
     if (temperature_celsius_ > 115.0) 
-        throw OverheatingException("VRM thermal limit exceeded (> 115 °C).");
+        throw OverheatingException("VRM thermal limit exceeded (> 115 В°C).");
 }
 
 void VRM::CoolDown(double delta_celsius) {

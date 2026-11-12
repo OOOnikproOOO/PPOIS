@@ -8,7 +8,9 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "Motherboard.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
+#include "POSTFailureException.h"
 
 TEST(MotherboardTest, ConstructorAndGetters) {
     VRM vrm(16, 1.25, 40.0, 92.0);

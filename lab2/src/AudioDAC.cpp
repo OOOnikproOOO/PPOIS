@@ -6,7 +6,7 @@
  */
 
 #include "AudioDAC.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 AudioDAC::AudioDAC(int sampling_rate_hz, int bit_depth, double snr_db) :
     sampling_rate_hz_(sampling_rate_hz), bit_depth_(bit_depth), snr_db_(snr_db), is_active_(true) {}

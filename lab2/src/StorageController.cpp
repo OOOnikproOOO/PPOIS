@@ -7,7 +7,7 @@
 
 #include <algorithm>
 #include "StorageController.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
 
 StorageController::StorageController(const std::string& controller_type) : 
     controller_type_(controller_type), raid_mode_("NONE"), ssds_(), hdds_(), is_raid_healthy_(true) {}

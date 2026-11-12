@@ -6,7 +6,8 @@
  */
 
 #include "HDD.h"
-#include "Exceptions.h"
+#include "StorageOutOfSpaceException.h"
+#include "StorageBadSectorException.h"
 
 HDD::HDD(const std::string& model, int rpm, int capacity_gb, int cache_mb) :
     model_(model), rpm_(rpm), capacity_gb_(capacity_gb), used_gb_(0), cache_mb_(cache_mb), heads_parked_(true), bad_sectors_count_(0) {}

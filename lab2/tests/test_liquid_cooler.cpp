@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "LiquidCooler.h"
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "OverheatingException.h"
 
 TEST(LiquidCoolerTest, ConstructorAndGetters) {
     LiquidCooler cooler("NZXT Kraken X73", 360, 2800, 28.0, 160.0);

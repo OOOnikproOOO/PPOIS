@@ -1,12 +1,23 @@
 /**
  * @file test_exceptions.cpp
- * @brief Модульные тесты для классов исключений предметной области "Компьютер".
+ * @brief РњРѕРґСѓР»СЊРЅС‹Рµ С‚РµСЃС‚С‹ РґР»СЏ РєР»Р°СЃСЃРѕРІ РёСЃРєР»СЋС‡РµРЅРёР№ РїСЂРµРґРјРµС‚РЅРѕР№ РѕР±Р»Р°СЃС‚Рё "РљРѕРјРїСЊСЋС‚РµСЂ".
  * @author Nikita Momot
  * @date 2026
  */
 
 #include <gtest/gtest.h>
-#include "Exceptions.h"
+#include "ComputerException.h"
+#include "DeviceNotFoundException.h"
+#include "IncompatibleSocketException.h"
+#include "IncompatibleMemoryException.h"
+#include "ThermalThrottlingException.h"
+#include "OverheatingException.h"
+#include "PowerSupplyOverloadException.h"
+#include "VoltageInstabilityException.h"
+#include "StorageOutOfSpaceException.h"
+#include "StorageBadSectorException.h"
+#include "MemoryAllocationException.h"
+#include "POSTFailureException.h"
 
 TEST(ExceptionsTest, ComputerExceptionHierarchy) {
     try {

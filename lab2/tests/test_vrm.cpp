@@ -8,7 +8,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "VRM.h"
-#include "Exceptions.h"
+#include "OverheatingException.h"
+#include "VoltageInstabilityException.h"
 
 TEST(VRMTest, ConstructorAndGetters) {
     VRM vrm(14, 1.20, 40.0, 93.5);
