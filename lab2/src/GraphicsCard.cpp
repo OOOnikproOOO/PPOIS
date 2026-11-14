@@ -81,3 +81,7 @@ VideoPort& GraphicsCard::GetPort(int index) {
     
     return video_ports_[index];
 }
+
+double GraphicsCard::GetTemperatureCelsius() const {
+    return gpu_core_.GetTemperatureCelsius();
+}

@@ -10,15 +10,19 @@
 
 Проект моделирует архитектуру современного персонального компьютера и его подсистем:
 - **Вычислительные компоненты:** процессор (CPU), физические ядра (CPUCore), многоуровневая кэш-память (CPUCache), термоинтерфейс (ThermalPaste).
-- **Подсистема оперативной памяти:** модули памяти (RAMStick), тайминги (RAMTiming), многоканальная подсистема (RAM).
+- **Подсистема оперативной памяти:** планки памяти (RAMStick), тайминги (RAMTiming), многоканальная подсистема (RAM).
 - **Подсистема постоянной памяти и хранилища:** твердотельные накопители (SSD), магнитные диски (HDD), RAID-контроллер (StorageController).
 - **Графическая подсистема:** графический процессор (GPUCore), видеопамять (VRAM), видеовыходы (VideoPort), дискретная видеокарта (GraphicsCard), монитор (Display).
 - **Аудиоподсистема:** цифро-аналоговый преобразователь (AudioDAC), цифровой процессор сигналов (AudioDSP), аудиоразъемы (AudioJack), звуковая карта (SoundCard), акустическая система (SpeakerSystem).
-- **Материнская плата и шины расширения:** модуль регулятора напряжения (VRM), чипсет (Chipset), разъемы расширения (PCIeSlot), системная плата (Motherboard).
+- **Материнская плата и шины расширения:** стабилизатор напряжения (VRM), чипсет (Chipset), разъемы расширения (PCIeSlot), системная плата (Motherboard).
 - **Подсистема электропитания:** шины постоянного тока (PowerRail), блок питания (PowerSupply).
-- **Подсистема охлаждения и корпус:** вентиляторы охлаждения (CoolingFan), СЖО / водяное охлаждение (LiquidCooler), комплексная система охлаждения (CoolingSystem), компьютерный корпус (ComputerCase).
+- **Подсистема охлаждения и корпус:** вентиляторы охлаждения (CoolingFan), водяное охлаждение (LiquidCooler), комплексная система охлаждения (CoolingSystem), компьютерный корпус (ComputerCase).
 - **Системное ПО, загрузка и время:** конфигурация прошивки (BIOSSettings), загрузчик ОС (Bootloader), системные часы и аптайм (SystemClock).
 - **Операционная система и файловая система:** файлы (FileEntry), каталоги (DirectoryNode), файловая система (FileSystem), процессы (OSProcess), планировщик задач (ProcessScheduler), драйверы устройств (DeviceDriver), операционная система (OperatingSystem).
+- **Сетевая подсистема и безопасность:** сетевые пакеты (NetworkPacket), сетевой адаптер (NetworkAdapter), межсетевой экран (SecurityFirewall).
+- **Периферийные устройства ввода и порты:** клавиатура (Keyboard), мышь (Mouse), порты внешней шины (USBPort).
+- **Управление доступом, мониторинг и бенчмарки:** учетная запись пользователя (UserAccount), аппаратная диагностика (SystemDiagnostics), синтетический бенчмарк (SystemBenchmark).
+- **Интегрированная рабочая станция:** комплексная сборка компьютера (Computer), связывающая все подсистемы в единый функциональный организм.
 
 ---
 
@@ -32,58 +36,181 @@ lab2/
 │   ├── IncompatibleSocketException.h  # Исключение: несовместимость сокета CPU
 │   ├── IncompatibleMemoryException.h  # Исключение: несовместимость памяти RAM
 │   ├── ThermalThrottlingException.h   # Исключение: троттлинг от перегрева
-│   ├── OverheatingException.h         # Исключение: критический перегрев (TJMax)
+│   ├── OverheatingException.h         # Исключение: критический перегрев
 │   ├── PowerSupplyOverloadException.h # Исключение: перегрузка блока питания
 │   ├── VoltageInstabilityException.h  # Исключение: нестабильность напряжения
 │   ├── StorageOutOfSpaceException.h   # Исключение: нехватка места на носителе
 │   ├── StorageBadSectorException.h    # Исключение: сбойный сектор накопителя
 │   ├── MemoryAllocationException.h    # Исключение: ошибка выделения памяти
 │   ├── POSTFailureException.h         # Исключение: сбой самотестирования POST
-│   ├── CPUCache.h               # Кэш-память процессора (L1, L2, L3)
+│   ├── CPUCache.h               # Кэш-память процессора
 │   ├── CPUCore.h                # Физическое ядро процессора
 │   ├── CPU.h                    # Центральный процессор
 │   ├── RAMTiming.h              # Тайминги оперативной памяти
-│   ├── RAMStick.h               # Модуль оперативной памяти (DIMM)
+│   ├── RAMStick.h               # Планка оперативной памяти
 │   ├── RAM.h                    # Подсистема оперативной памяти
 │   ├── SSD.h                    # Твердотельный накопитель
 │   ├── HDD.h                    # Жесткий диск
 │   ├── StorageController.h      # Дисковый RAID-контроллер
 │   ├── ThermalPaste.h           # Термоинтерфейс
-│   ├── GPUCore.h                # Графический процессор (GPU)
-│   ├── VRAM.h                   # Видеопамять (GDDR6/GDDR6X)
-│   ├── VideoPort.h              # Видеовыходы (HDMI, DisplayPort)
+│   ├── GPUCore.h                # Графический процессор
+│   ├── VRAM.h                   # Видеопамять
+│   ├── VideoPort.h              # Видеовыходы
 │   ├── GraphicsCard.h           # Дискретная видеокарта
 │   ├── AudioDAC.h               # Аудио ЦАП
 │   ├── AudioDSP.h               # Цифровой процессор звуковых эффектов
-│   ├── AudioJack.h              # Аналоговые аудиоразъемы 3.5мм
+│   ├── AudioJack.h              # Аналоговые аудиоразъемы
 │   ├── SoundCard.h              # Звуковая карта
 │   ├── Display.h                # Монитор
 │   ├── SpeakerSystem.h          # Акустическая система
-│   ├── VRM.h                    # Модуль регулятора напряжения (VRM)
-│   ├── Chipset.h                # Чипсет материнской платы (PCH)
+│   ├── VRM.h                    # Стабилизатор напряжения
+│   ├── Chipset.h                # Чипсет материнской платы
 │   ├── PCIeSlot.h               # Разъем PCI Express
 │   ├── Motherboard.h            # Системная материнская плата
-│   ├── PowerRail.h              # Линия/шина питания постоянного тока (+12V, +5V, +3.3V)
-│   ├── PowerSupply.h            # Блок питания (PSU)
+│   ├── PowerRail.h              # Линия/шина питания постоянного тока
+│   ├── PowerSupply.h            # Блок питания
 │   ├── CoolingFan.h             # Вентилятор охлаждения с PWM
-│   ├── LiquidCooler.h           # СЖО (водяное охлаждение / AIO)
+│   ├── LiquidCooler.h           # Водяное охлаждение
 │   ├── CoolingSystem.h          # Комплексная система терморегуляции
 │   ├── ComputerCase.h           # Компьютерный корпус
-│   ├── BIOSSettings.h             # Настройки прошивки BIOS/UEFI
-│   ├── Bootloader.h               # Системный загрузчик ОС
-│   ├── SystemClock.h              # Часы реального времени и счетчик аптайма
-│   ├── FileEntry.h                # Файл с текстовыми данными и правами доступа
-│   ├── DirectoryNode.h            # Каталог иерархии файловой системы
-│   ├── FileSystem.h               # Файловая система и управление разделом
-│   ├── OSProcess.h                # Процесс операционной системы
-│   ├── ProcessScheduler.h         # Планировщик задач и процессов ОС
-│   ├── DeviceDriver.h             # Драйвер аппаратного устройства
-│   └── OperatingSystem.h          # Операционная система
-├── src/                         # Реализация логики классов (.cpp)
+│   ├── BIOSSettings.h           # Настройки прошивки BIOS/UEFI
+│   ├── Bootloader.h             # Системный загрузчик ОС
+│   ├── SystemClock.h            # Часы реального времени и счетчик аптайма
+│   ├── FileEntry.h              # Файл с текстовыми данными и правами доступа
+│   ├── DirectoryNode.h          # Каталог иерархии файловой системы
+│   ├── FileSystem.h             # Файловая система
+│   ├── OSProcess.h              # Процесс операционной системы
+│   ├── ProcessScheduler.h       # Планировщик задач и процессов ОС
+│   ├── DeviceDriver.h           # Драйвер аппаратного устройства
+│   ├── OperatingSystem.h        # Операционная система
+│   ├── NetworkPacket.h          # Сетевой IP-пакет данных
+│   ├── NetworkAdapter.h         # Сетевой адаптер
+│   ├── Keyboard.h               # Клавиатура
+│   ├── Mouse.h                  # Мышь
+│   ├── USBPort.h                # Порт внешней шины USB
+│   ├── SecurityFirewall.h       # Межсетевой экран
+│   ├── UserAccount.h            # Учетная запись пользователя
+│   ├── SystemBenchmark.h        # Комплексный тест производительности
+│   ├── SystemDiagnostics.h      # Аппаратный монитор температур и питания (диагностика)
+│   └── Computer.h               # Итоговая интеграция всей сборки компьютера
+├── src/                   # Реализация логики классов (.cpp)
+│   ├── ComputerException.cpp
+│   ├── DeviceNotFoundException.cpp
+│   ├── IncompatibleSocketException.cpp
+│   ├── IncompatibleMemoryException.cpp
+│   ├── ThermalThrottlingException.cpp
+│   ├── OverheatingException.cpp
+│   ├── PowerSupplyOverloadException.cpp
+│   ├── VoltageInstabilityException.cpp
+│   ├── StorageOutOfSpaceException.cpp
+│   ├── StorageBadSectorException.cpp
+│   ├── MemoryAllocationException.cpp
+│   ├── POSTFailureException.cpp
+│   ├── CPUCache.cpp
+│   ├── CPUCore.cpp
+│   ├── CPU.cpp
+│   ├── RAMTiming.cpp
+│   ├── RAMStick.cpp
+│   ├── RAM.cpp
+│   ├── SSD.cpp
+│   ├── HDD.cpp
+│   ├── StorageController.cpp
+│   ├── ThermalPaste.cpp
+│   ├── GPUCore.cpp
+│   ├── VRAM.cpp
+│   ├── VideoPort.cpp
+│   ├── GraphicsCard.cpp
+│   ├── AudioDAC.cpp
+│   ├── AudioDSP.cpp
+│   ├── AudioJack.cpp
+│   ├── SoundCard.cpp
+│   ├── Display.cpp
+│   ├── SpeakerSystem.cpp
+│   ├── VRM.cpp
+│   ├── Chipset.cpp
+│   ├── PCIeSlot.cpp
+│   ├── Motherboard.cpp
+│   ├── PowerRail.cpp
+│   ├── PowerSupply.cpp
+│   ├── CoolingFan.cpp
+│   ├── LiquidCooler.cpp
+│   ├── CoolingSystem.cpp
+│   ├── ComputerCase.cpp
+│   ├── BIOSSettings.cpp
+│   ├── Bootloader.cpp
+│   ├── SystemClock.cpp
+│   ├── FileEntry.cpp
+│   ├── DirectoryNode.cpp
+│   ├── FileSystem.cpp
+│   ├── OSProcess.cpp
+│   ├── ProcessScheduler.cpp
+│   ├── DeviceDriver.cpp
+│   ├── OperatingSystem.cpp
+│   ├── NetworkPacket.cpp
+│   ├── NetworkAdapter.cpp
+│   ├── Keyboard.cpp
+│   ├── Mouse.cpp
+│   ├── USBPort.cpp
+│   ├── SecurityFirewall.cpp
+│   ├── UserAccount.cpp
+│   ├── SystemBenchmark.cpp
+│   ├── SystemDiagnostics.cpp
+│   └── Computer.cpp
 ├── app/                         # Консольный интерфейс пользователя (CLI)
 │   └── main.cpp
 ├── tests/                       # Unit-тесты для каждого класса (GoogleTest)
-├── CMakeLists.txt               # Сценарий сборки CMake
+│   ├── test_audio_dac.cpp
+│   ├── test_audio_dsp.cpp
+│   ├── test_audio_jack.cpp
+│   ├── test_bios_settings.cpp
+│   ├── test_bootloader.cpp
+│   ├── test_chipset.cpp
+│   ├── test_computer.cpp
+│   ├── test_computer_case.cpp
+│   ├── test_cooling_fan.cpp
+│   ├── test_cooling_system.cpp
+│   ├── test_cpu.cpp
+│   ├── test_cpu_cache.cpp
+│   ├── test_cpu_core.cpp
+│   ├── test_device_driver.cpp
+│   ├── test_directory_node.cpp
+│   ├── test_display.cpp
+│   ├── test_exceptions.cpp
+│   ├── test_file_entry.cpp
+│   ├── test_file_system.cpp
+│   ├── test_gpu_core.cpp
+│   ├── test_graphics_card.cpp
+│   ├── test_hdd.cpp
+│   ├── test_keyboard.cpp
+│   ├── test_liquid_cooler.cpp
+│   ├── test_motherboard.cpp
+│   ├── test_mouse.cpp
+│   ├── test_network_adapter.cpp
+│   ├── test_network_packet.cpp
+│   ├── test_operating_system.cpp
+│   ├── test_os_process.cpp
+│   ├── test_pcie_slot.cpp
+│   ├── test_power_rail.cpp
+│   ├── test_power_supply.cpp
+│   ├── test_process_scheduler.cpp
+│   ├── test_ram.cpp
+│   ├── test_ram_stick.cpp
+│   ├── test_ram_timing.cpp
+│   ├── test_security_firewall.cpp
+│   ├── test_sound_card.cpp
+│   ├── test_speaker_system.cpp
+│   ├── test_ssd.cpp
+│   ├── test_storage_controller.cpp
+│   ├── test_system_benchmark.cpp
+│   ├── test_system_clock.cpp
+│   ├── test_system_diagnostics.cpp
+│   ├── test_thermal_paste.cpp
+│   ├── test_usb_port.cpp
+│   ├── test_user_account.cpp
+│   ├── test_video_port.cpp
+│   ├── test_vram.cpp
+│   └── test_vrm.cpp
+├── CMakeLists.txt               # Файл конфигурации сборки CMake
 ├── Doxyfile                     # Конфигурация Doxygen
 └── README.md                    # Документация проекта
 ```
@@ -135,36 +262,44 @@ lab2/
 | 38 | ProcessScheduler | 3 | 5 | OSProcess |
 | 39 | DeviceDriver | 4 | 4 | — |
 | 40 | OperatingSystem | 7 | 5 | Bootloader, FileSystem, ProcessScheduler, SystemClock, DeviceDriver |
+| 41 | NetworkPacket | 5 | 5 | — |
+| 42 | NetworkAdapter | 6 | 6 | NetworkPacket |
+| 43 | Keyboard | 4 | 5 | — |
+| 44 | Mouse | 5 | 5 | — |
+| 45 | USBPort | 4 | 4 | — |
+| 46 | SecurityFirewall | 4 | 5 | NetworkPacket |
+| 47 | UserAccount | 5 | 5 | — |
+| 48 | SystemBenchmark | 4 | 5 | — |
+| 49 | SystemDiagnostics | 4 | 5 | — |
+| 50 | Computer | 10 | 5 | Motherboard, CPU, RAM, GraphicsCard, PowerSupply, OperatingSystem, NetworkAdapter, SystemDiagnostics |
 
 ---
 
-## 4. Собственные классы исключений (12)
+## 4. Исключения (12)
 
-1. `ComputerException` — базовое исключение предметной области.
-2. `DeviceNotFoundException` — обращение к отсутствующему или неподключенному устройству.
-3. `IncompatibleSocketException` — несовместимость сокета процессора и материнской платы.
-4. `IncompatibleMemoryException` — несовместимость типа/поколения оперативной памяти.
-5. `ThermalThrottlingException` — критический перегрев, вызывающий сброс рабочих частот.
-6. `OverheatingException` — аварийный перегрев, превышающий TJMax.
-7. `PowerSupplyOverloadException` — превышение допустимой мощности блока питания.
-8. `VoltageInstabilityException` — отклонение напряжения на шинах питания от стандарта ATX.
-9. `StorageOutOfSpaceException` — попытка записи при отсутствии свободного места на накопителе.
-10. `StorageBadSectorException` — обнаружение поврежденного сектора или ячейки памяти.
-11. `MemoryAllocationException` — ошибка аллокации требуемого объема RAM.
-12. `POSTFailureException` — сбой процедуры самотестирования при запуске компьютера.
+- ComputerException
+- DeviceNotFoundException
+- IncompatibleSocketException
+- IncompatibleMemoryException
+- ThermalThrottlingException
+- OverheatingException
+- PowerSupplyOverloadException
+- VoltageInstabilityException
+- StorageOutOfSpaceException
+- StorageBadSectorException
+- MemoryAllocationException
+- POSTFailureException
 
 ---
 
-## 5. Статистика проекта
+## 5. Итоговая статистика проекта
 
-| Показатель | Реализовано на данный момент | Требование к проекту |
-|---|---|---|
-| Классы предметной области | 40 (+ 12 классов исключений) | $\ge 50$ |
-| Поля суммарно | 188 полей | $\ge 150$ ✅ |
-| Содержательные методы-поведения | 155 поведений (195 с учётом конструкторов) | $\ge 100$ ✅ |
-| Ассоциации между классами | 27 ассоциаций | $\ge 30$ |
-| Собственные исключения | 12 исключений | $\ge 12$ ✅ |
-| Unit-тесты (GoogleTest) | 175 тестов (в 41 файле) | $\ge 90\%$ покрытие ✅ |
+| Показатель | Значение |
+|---|---|
+| Поля | 239 |
+| Поведения | 193 |
+| Ассоциации | 37 |
+| Исключения | 12 |
 
 ---
 
@@ -224,9 +359,8 @@ doxygen Doxyfile
 
 ## 8. CI/CD Pipeline
 
-При каждом пуше в ветки `main`, `master`, `feature-lab2` (а также при Pull Request) автоматически запускается GitHub Actions workflow (`.github/workflows/lab2_ci.yml`), который выполняет:
-1. Сборку проекта (CMake + Ninja).
-2. Запуск всех unit-тестов (`Tests_Run`).
-3. Проверку покрытия кода тестами через `gcovr` (не менее 90%).
-4. Статический анализ кода линтером `cppcheck`.
-5. Сборку Windows-релиза и публикацию архива `lab2-windows.zip` в разделе Releases (при пуше в основную ветку или тега `v2*`).
+При каждом пуше, а также при Pull Request автоматически запускается GitHub Actions workflow (`.github/workflows/lab2_ci.yml`), который выполняет:
+1. Сборку проекта (CMake).
+2. Запуск всех Unit-тестов (`Tests_Run`).
+3. Статический анализ кода линтером `cppcheck`.
+4. Публикацию исполняемого артефакта в Releases (при пуше тега версии).

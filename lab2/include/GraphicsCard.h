@@ -103,6 +103,13 @@ public:
      */
     VideoPort& GetPort(int index);
 
+    /**
+     * @brief Gets current graphics core temperature in degrees Celsius.
+     * @return Core temperature in Celsius.
+     */
+    double GetTemperatureCelsius() const;
+
+
 private:
     std::string model_name_;
     int power_draw_watts_;

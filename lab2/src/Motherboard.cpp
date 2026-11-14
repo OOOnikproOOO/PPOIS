@@ -86,3 +86,7 @@ const PCIeSlot& Motherboard::GetSlot(int index) const {
         throw DeviceNotFoundException("PCIe slot index out of range.");
     return pcie_slots_[index];
 }
+
+double Motherboard::GetVRMTemperature() const {
+    return vrm_.GetTemperatureCelsius();
+}

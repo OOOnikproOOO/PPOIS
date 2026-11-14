@@ -22,6 +22,7 @@ TEST(MotherboardTest, ConstructorAndGetters) {
     EXPECT_EQ(mb.GetBiosVersion(), "v1.40");
     EXPECT_EQ(mb.GetSlotCount(), 0);
     EXPECT_EQ(mb.GetVRM().GetPhaseCount(), 16);
+    EXPECT_DOUBLE_EQ(mb.GetVRMTemperature(), mb.GetVRM().GetTemperatureCelsius());
     EXPECT_EQ(mb.GetChipset().GetModelName(), "AMD B650");
 }
 

@@ -86,6 +86,13 @@ public:
     RAMStick GetStick(int slot_index) const;
 
     /**
+     * @brief Gets a reference to the RAM stick at specified slot index.
+     * @param slot_index Target slot index.
+     * @return Reference to RAMStick.
+     */
+    RAMStick& GetStick(int slot_index);
+
+    /**
      * @brief Gets total number of motherboard DIMM slots.
      * @return Maximum slots.
      */

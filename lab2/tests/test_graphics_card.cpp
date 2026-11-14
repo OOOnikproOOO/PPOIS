@@ -30,6 +30,7 @@ TEST(GraphicsCardTest, AddPortAndAccess) {
 
 TEST(GraphicsCardTest, RenderSceneAndVRAMAllocation) {
     GraphicsCard gpu("GeForce RTX 4070", 200, GPUCore(0, 2400), VRAM(12288, 192, "GDDR6X"));
+    EXPECT_DOUBLE_EQ(gpu.GetTemperatureCelsius(), gpu.GetGPUCore().GetTemperatureCelsius());
     gpu.RenderScene(60, 2048);
     EXPECT_EQ(gpu.GetVRAM().GetUsedMb(), 2048);
     EXPECT_GT(gpu.GetGPUCore().GetLoadPercentage(), 0.0);

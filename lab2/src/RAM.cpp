@@ -11,12 +11,16 @@
 #include "IncompatibleMemoryException.h"
 #include "MemoryAllocationException.h"
 
-RAM::RAM(int max_slots) : max_slots_(max_slots), sticks_(), channel_mode_(1), total_allocated_mb_(0) {}
+RAM::RAM(int max_slots) : max_slots_(max_slots), sticks_(max_slots, RAMStick("", 0, 0, "", RAMTiming())), channel_mode_(1), total_allocated_mb_(0) {}
 
 bool RAM::operator==(const RAM& other) const {
-    return (max_slots_ == other.max_slots_ &&
-            sticks_ == other.sticks_ &&
-            channel_mode_ == other.channel_mode_);
+    if (max_slots_ != other.max_slots_ || channel_mode_ != other.channel_mode_)
+        return false;
+    for (int i = 0; i < max_slots_; ++i) {
+        if (sticks_[i] != other.sticks_[i])
+            return false;
+    }
+    return true;
 }
 
 bool RAM::operator!=(const RAM& other) const {
@@ -24,7 +28,7 @@ bool RAM::operator!=(const RAM& other) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const RAM& ram) {
-    os << "RAM Subsystem [" << ram.GetTotalCapacityMb() << " MB Total, " << ram.sticks_.size() << "/" << ram.max_slots_ << " Slots, Channel: " << ram.channel_mode_ << "x, Used: " << ram.total_allocated_mb_ << " MB]";
+    os << "RAM Subsystem [" << ram.GetTotalCapacityMb() << " MB Total, " << ram.GetInstalledSticksCount() << "/" << ram.max_slots_ << " Slots, Channel: " << ram.channel_mode_ << "x, Used: " << ram.total_allocated_mb_ << " MB]";
     return os;
 }
 
@@ -32,19 +36,21 @@ void RAM::InstallStick(const RAMStick& stick, int slot_index) {
     if (slot_index < 0 || slot_index >= max_slots_)
         throw ComputerException("Invalid RAM slot index specified.");
   
-    if (!sticks_.empty() && sticks_[0].GetGeneration() != stick.GetGeneration())
-        throw IncompatibleMemoryException("Cannot mix different DDR generations in the same system.");
+    for (const auto& s : sticks_) {
+        if (s.GetCapacityMb() > 0 && s.GetGeneration() != stick.GetGeneration())
+            throw IncompatibleMemoryException("Cannot mix different DDR generations in the same system.");
+    }
   
-    sticks_.push_back(stick);
+    sticks_[slot_index] = stick;
     UpdateChannelMode();
 }
 
 RAMStick RAM::RemoveStick(int slot_index) {
-    if (slot_index < 0 || slot_index >= sticks_.size())
+    if (slot_index < 0 || slot_index >= max_slots_ || sticks_[slot_index].GetCapacityMb() == 0)
         throw DeviceNotFoundException("No RAM stick installed in requested slot.");
   
     RAMStick removed = sticks_[slot_index];
-    sticks_.erase(sticks_.begin() + slot_index);
+    sticks_[slot_index] = RAMStick("", 0, 0, "", RAMTiming());
     UpdateChannelMode();
     return removed;
 }
@@ -73,14 +79,22 @@ void RAM::Free(int megabytes) {
 
 int RAM::GetTotalCapacityMb() const {
     int total = 0;
-    for (const auto& stick : sticks_)
-        total += stick.GetCapacityMb();
-  
+    for (const auto& stick : sticks_) {
+        if (stick.GetCapacityMb() > 0)
+            total += stick.GetCapacityMb();
+    }
     return total;
 }
 
 RAMStick RAM::GetStick(int slot_index) const {
-    if (slot_index < 0 || slot_index >= sticks_.size())
+    if (slot_index < 0 || slot_index >= max_slots_ || sticks_[slot_index].GetCapacityMb() == 0)
+        throw DeviceNotFoundException("No RAM stick found at requested slot index.");
+   
+    return sticks_[slot_index];
+}
+
+RAMStick& RAM::GetStick(int slot_index) {
+    if (slot_index < 0 || slot_index >= max_slots_ || sticks_[slot_index].GetCapacityMb() == 0)
         throw DeviceNotFoundException("No RAM stick found at requested slot index.");
    
     return sticks_[slot_index];
@@ -91,7 +105,12 @@ int RAM::GetMaxSlots() const {
 }
 
 int RAM::GetInstalledSticksCount() const {
-    return static_cast<int>(sticks_.size());
+    int count = 0;
+    for (const auto& stick : sticks_) {
+        if (stick.GetCapacityMb() > 0)
+            count++;
+    }
+    return count;
 }
 
 int RAM::GetChannelMode() const {
@@ -103,12 +122,11 @@ int RAM::GetTotalAllocatedMb() const {
 }
 
 void RAM::UpdateChannelMode() {
-    int count = static_cast<int>(sticks_.size());
+    int count = GetInstalledSticksCount();
     if (count >= 4)
         channel_mode_ = 4;
-    else 
-        if (count >= 2)
-            channel_mode_ = 2;
-        else
-            channel_mode_ = 1;
+    else if (count >= 2)
+        channel_mode_ = 2;
+    else
+        channel_mode_ = 1;
 }

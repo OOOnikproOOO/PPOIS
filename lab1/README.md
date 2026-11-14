@@ -11,21 +11,20 @@
 
 ```text
 lab1/
-├── src/                # Реализация логики классов (.cpp)
+├── src/                	# Реализация логики классов (.cpp)
 │   ├── Set.cpp
 │   └── TicTacToe.cpp
-├── include/            # Объявление классов (.h)
+├── include/            	# Объявление классов (.h)
 │   ├── Set.h
 │   └── TicTacToe.h
-├── app/                # Консольный пользовательский интерфейс (CLI)
+├── app/                	# Консольный пользовательский интерфейс (CLI)
 │   └── main.cpp
-├── tests/              # Unit-тесты (GoogleTest)
+├── tests/              	# Unit-тесты (GoogleTest)
 │   ├── test_set.cpp
 │   └── test_tictactoe.cpp
-├── docs/               # Doxygen-документация (генерируется)
-├── .github/            # Настройки CI/CD пайплайна
-├── CMakeLists.txt      # Файл конфигурации сборки
-└── Doxyfile            # Конфигурация для генерации документации
+├── README.md           	# Документация проекта
+├── CMakeLists.txt      	# Файл конфигурации сборки
+└── Doxyfile            	# Конфигурация для генерации документации
 ```
 
 ## Возможности классов
@@ -98,6 +97,6 @@ doxygen Doxyfile
 ## CI/CD Pipeline
 При каждом пуше или Pull Request автоматически запускается GitHub Actions workflow (`.github/workflows/ci.yml`), который выполняет:
 1. Сборку проекта (CMake).
-2. Запуск всех unit-тестов.
+2. Запуск всех Unit-тестов.
 3. Проверку кода линтером (cpplint).
 4. Публикацию исполняемого артефакта в Releases (при пуше тега версии).

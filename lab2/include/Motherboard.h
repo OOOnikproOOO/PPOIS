@@ -116,6 +116,13 @@ public:
     PCIeSlot& GetSlot(int index);
     const PCIeSlot& GetSlot(int index) const;
 
+    /**
+     * @brief Gets current VRM operating temperature in degrees Celsius.
+     * @return VRM temperature.
+     */
+    double GetVRMTemperature() const;
+
+
 private:
     std::string model_name_;
     std::string form_factor_;
