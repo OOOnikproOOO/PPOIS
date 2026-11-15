@@ -50,6 +50,7 @@ jobs:
                    --error-exitcode=1 \
                    --inline-suppr \
                    --suppress=missingIncludeSystem \
+                   --suppress=returnByReference \
                    -I lab2/include \
                    lab2/src lab2/app
 

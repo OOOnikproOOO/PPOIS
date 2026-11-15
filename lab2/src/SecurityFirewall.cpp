@@ -9,9 +9,10 @@
 #include "ComputerException.h"
 
 SecurityFirewall::SecurityFirewall(bool is_enabled, const std::string& security_level, int blocked_packets_count) :
-    is_enabled_(is_enabled), security_level_(security_level), blocked_packets_count_(blocked_packets_count) {
-    allowed_ports_ = {80, 443, 22, 53};
-}
+    is_enabled_(is_enabled),
+    security_level_(security_level),
+    blocked_packets_count_(blocked_packets_count),
+    allowed_ports_({80, 443, 22, 53}) {}
 
 bool SecurityFirewall::operator==(const SecurityFirewall& other) const {
     return is_enabled_ == other.is_enabled_ && security_level_ == other.security_level_ &&

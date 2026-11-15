@@ -9,6 +9,10 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(MSVC)
+    add_compile_options(/FS)
+endif()
+
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_executable(Lab2_Run app/main.cpp ${SRC_FILES})
