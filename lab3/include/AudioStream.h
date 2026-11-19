@@ -25,8 +25,26 @@ public:
      */
     AudioStream(const std::string& stream_source = "local://track.mp3", double total_duration_sec = 180.0, size_t buffer_capacity = 2048);
 
+    /**
+     * @brief Compares two AudioStream instances for equality.
+     * @param other Stream to compare with.
+     * @return true if properties match.
+     */
     bool operator==(const AudioStream& other) const;
+
+    /**
+     * @brief Compares two AudioStream instances for inequality.
+     * @param other Stream to compare with.
+     * @return true if properties differ.
+     */
     bool operator!=(const AudioStream& other) const;
+
+    /**
+     * @brief Stream output operator for formatting AudioStream info.
+     * @param os Output stream.
+     * @param stream Stream instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const AudioStream& stream);
 
     /**
@@ -53,10 +71,34 @@ public:
      */
     double GetRemainingTimeSec() const;
 
+    /**
+     * @brief Gets stream source path or URL.
+     * @return Reference to stream source string.
+     */
     const std::string& GetStreamSource() const;
+
+    /**
+     * @brief Gets total stream duration in seconds.
+     * @return Duration in seconds.
+     */
     double GetTotalDurationSec() const;
+
+    /**
+     * @brief Gets current stream read position in seconds.
+     * @return Current seconds.
+     */
     double GetCurrentPositionSec() const;
+
+    /**
+     * @brief Checks if stream reached end of file.
+     * @return true if EOF reached.
+     */
     bool IsEof() const;
+
+    /**
+     * @brief Gets constant reference to internal AudioBuffer.
+     * @return Reference to AudioBuffer.
+     */
     const AudioBuffer& GetBuffer() const;
 
 private:

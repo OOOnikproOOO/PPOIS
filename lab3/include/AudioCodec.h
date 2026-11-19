@@ -26,8 +26,26 @@ public:
      */
     AudioCodec(const std::string& codec_name = "MP3", int bitrate_kbps = 320, int sample_rate_hz = 44100, int channels_count = 2, bool is_lossless = false);
 
+    /**
+     * @brief Compares two AudioCodec instances for equality.
+     * @param other Codec to compare with.
+     * @return true if parameters match.
+     */
     bool operator==(const AudioCodec& other) const;
+
+    /**
+     * @brief Compares two AudioCodec instances for inequality.
+     * @param other Codec to compare with.
+     * @return true if parameters differ.
+     */
     bool operator!=(const AudioCodec& other) const;
+
+    /**
+     * @brief Stream output operator for formatting AudioCodec info.
+     * @param os Output stream.
+     * @param codec Codec instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const AudioCodec& codec);
 
     /**
@@ -55,10 +73,34 @@ public:
      */
     void SetBitrate(int bitrate);
 
+    /**
+     * @brief Gets codec algorithm name.
+     * @return Reference to codec name string.
+     */
     const std::string& GetCodecName() const;
+
+    /**
+     * @brief Gets transmission bitrate in kbps.
+     * @return Bitrate in kbps.
+     */
     int GetBitrateKbps() const;
+
+    /**
+     * @brief Gets audio sample rate in Hz.
+     * @return Sample rate in Hertz.
+     */
     int GetSampleRateHz() const;
+
+    /**
+     * @brief Gets channel count.
+     * @return Number of channels (1 for mono, 2 for stereo).
+     */
     int GetChannelsCount() const;
+
+    /**
+     * @brief Checks if codec compression is lossless.
+     * @return true if lossless.
+     */
     bool IsLossless() const;
 
 private:

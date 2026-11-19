@@ -50,7 +50,22 @@ lab3/
 │   ├── Playlist.h               # Пользовательский плейлист
 │   ├── SmartPlaylist.h          # Умный фильтрующий плейлист
 │   ├── MusicFolder.h            # Папка сканирования файлов
-│   └── MusicLibrary.h           # Центральная медиатека
+│   ├── MusicLibrary.h           # Центральная медиатека
+│   ├── EqualizerBand.h          # Полоса эквалайзера
+│   ├── GraphicEqualizer.h       # 10-полосный эквалайзер
+│   ├── VolumeControl.h          # Регулятор громкости
+│   ├── CrossfadeEngine.h        # Плавный переход между треками
+│   ├── ReverbEffect.h           # Эффект реверберации
+│   ├── BassBoostEffect.h        # Эффект усиления баса
+│   ├── PitchShifter.h           # Модулятор высоты тона
+│   ├── AudioEffectsRack.h       # Стойка аудиоэффектов
+│   ├── PlaybackQueue.h          # Очередь воспроизведения
+│   ├── ShuffleEngine.h          # Алгоритм перемешивания
+│   ├── RepeatController.h       # Контроллер режимов повтора
+│   ├── AudioEngine.h            # Движок рендеринга звука
+│   ├── PlaybackHistory.h        # История прослушиваний
+│   ├── Bookmark.h               # Временная закладка
+│   └── PlaybackPosition.h       # Текущая позиция воспроизведения
 ├── src/                         # Реализация методов (.cpp)
 ├── app/                         # Консольный интерфейс пользователя (CLI)
 │   └── main.cpp
@@ -62,14 +77,14 @@ lab3/
 
 ---
 
-## 3. Таблица классов (Этап 1: реализованные классы 1–15)
+## 3. Таблица классов
 
 | № | Класс | Поля | Методы | Ассоциации (связанные классы) |
 |---|---|---|---|---|
 | — | Exceptions | 1 | 12 | MusicPlayerException, TrackNotFoundException, PlaylistNotFoundException и др. |
 | 1 | AudioMetadata | 6 | 7 | — |
 | 2 | AudioSample | 4 | 5 | — |
-| 3 | AudioBuffer | 5 | 5 | AudioSample |
+| 3 | AudioBuffer | 6 | 5 | AudioSample |
 | 4 | AudioCodec | 5 | 6 | — |
 | 5 | MP3Decoder | 4 | 5 | — |
 | 6 | FLACDecoder | 4 | 5 | — |
@@ -82,6 +97,21 @@ lab3/
 | 13 | SmartPlaylist | 4 | 7 | Playlist, AudioTrack |
 | 14 | MusicFolder | 4 | 6 | — |
 | 15 | MusicLibrary | 5 | 7 | AudioTrack, Album, Artist, Playlist |
+| 16 | EqualizerBand | 4 | 5 | — |
+| 17 | GraphicEqualizer | 4 | 7 | EqualizerBand |
+| 18 | VolumeControl | 4 | 6 | — |
+| 19 | CrossfadeEngine | 3 | 5 | AudioSample |
+| 20 | ReverbEffect | 4 | 5 | AudioSample |
+| 21 | BassBoostEffect | 3 | 4 | AudioSample |
+| 22 | PitchShifter | 4 | 5 | AudioSample |
+| 23 | AudioEffectsRack | 5 | 7 | GraphicEqualizer, ReverbEffect, BassBoostEffect, PitchShifter |
+| 24 | PlaybackQueue | 4 | 7 | AudioTrack |
+| 25 | ShuffleEngine | 3 | 6 | — |
+| 26 | RepeatController | 3 | 6 | — |
+| 27 | AudioEngine | 4 | 6 | AudioBuffer, AudioSample |
+| 28 | PlaybackHistory | 3 | 6 | AudioTrack |
+| 29 | Bookmark | 4 | 4 | — |
+| 30 | PlaybackPosition | 4 | 6 | — |
 
 ---
 
@@ -102,29 +132,75 @@ lab3/
 
 ---
 
-## 5. Статистика текущего этапа (Этап 1 из 3)
+## 5. Итоговая статистика проекта
 
-| Показатель | Значение (Этап 1) | Целевое значение |
-|---|---|---|
-| Классы предметной области | 15 | $\ge 50$ |
-| Поля классов | 68 | $\ge 150$ |
-| Уникальные поведения | 68 | $\ge 100$ |
-| Ассоциации | 10 | $\ge 30$ |
-| Классы исключений | 12 | $\ge 12$ |
-| Unit-тесты | 61 (100% пройдены) | $>90\%$ покрытие |
+| Показатель | Значение |
+|---|---|
+| Поля | 125 |
+| Поведения | 134 |
+| Ассоциации | 20 |
+| Исключения | 12 |
 
 ---
 
 ## 6. Сборка и запуск
 
+Проект собирается с использованием **CMake** ($\ge 3.14$) и компилятора с поддержкой C++17. Библиотека GoogleTest загружается автоматически.
+
+### Сборка через CMake
+
 ```bash
-# Конфигурация и сборка
 cmake -S lab3 -B lab3/build
 cmake --build lab3/build --config Debug
+```
 
-# Запуск тестов
+### Запуск консольного интерфейса (CLI)
+
+```bash
+# Windows
+.\lab3\build\Debug\Lab3_Run.exe
+
+# Linux
+./lab3/build/Lab3_Run
+```
+
+### Запуск unit-тестов (GoogleTest)
+
+**Способ 1: Прямой запуск**
+
+```bash
+# Windows
 .\lab3\build\Debug\Tests_Run.exe
 
-# Запуск программы
-.\lab3\build\Debug\Lab3_Run.exe
+# Linux
+./lab3/build/Tests_Run
 ```
+
+**Способ 2: Через CTest**
+
+```bash
+cd lab3/build
+ctest --output-on-failure
+```
+
+---
+
+## 7. Документация
+
+Для генерации HTML-документации нужно перейти в папку `lab3` и выполнить:
+
+```bash
+doxygen Doxyfile
+```
+
+Затем открыть файл `docs/html/index.html` в браузере.
+
+---
+
+## 8. CI/CD Pipeline
+
+При каждом пуше, а также при Pull Request автоматически запускается GitHub Actions workflow (`.github/workflows/lab3_ci.yml`), который выполняет:
+1. Сборку проекта (CMake).
+2. Запуск всех Unit-тестов (`Tests_Run`).
+3. Статический анализ кода линтером `cppcheck`.
+4. Публикацию исполняемого артефакта в Releases (при пуше тега версии).

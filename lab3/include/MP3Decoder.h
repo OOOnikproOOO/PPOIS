@@ -24,8 +24,26 @@ public:
      */
     MP3Decoder(bool is_vbr = false, int id3_version = 2, int frame_size_bytes = 417);
 
+    /**
+     * @brief Compares two MP3Decoder instances for equality.
+     * @param other Decoder to compare with.
+     * @return true if properties match.
+     */
     bool operator==(const MP3Decoder& other) const;
+
+    /**
+     * @brief Compares two MP3Decoder instances for inequality.
+     * @param other Decoder to compare with.
+     * @return true if properties differ.
+     */
     bool operator!=(const MP3Decoder& other) const;
+
+    /**
+     * @brief Stream output operator for formatting MP3Decoder info.
+     * @param os Output stream.
+     * @param decoder Decoder instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const MP3Decoder& decoder);
 
     /**
@@ -55,9 +73,28 @@ public:
      */
     double CalculateDecodedDurationSec(size_t total_bytes, int bitrate_kbps) const;
 
+    /**
+     * @brief Checks if stream is encoded with Variable Bitrate.
+     * @return true if VBR.
+     */
     bool IsVbr() const;
+
+    /**
+     * @brief Gets detected ID3 tag version.
+     * @return Version integer.
+     */
     int GetId3Version() const;
+
+    /**
+     * @brief Gets standard MPEG frame size in bytes.
+     * @return Frame size in bytes.
+     */
     int GetFrameSizeBytes() const;
+
+    /**
+     * @brief Gets total count of decoded frames.
+     * @return Decoded frames count.
+     */
     int GetDecodedFramesCount() const;
 
 private:

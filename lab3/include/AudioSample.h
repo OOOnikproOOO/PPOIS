@@ -23,8 +23,26 @@ public:
      */
     AudioSample(double left = 0.0, double right = 0.0, int bit_depth = 16);
 
+    /**
+     * @brief Compares two AudioSample instances for equality.
+     * @param other Sample to compare with.
+     * @return true if amplitudes and bit depth match.
+     */
     bool operator==(const AudioSample& other) const;
+
+    /**
+     * @brief Compares two AudioSample instances for inequality.
+     * @param other Sample to compare with.
+     * @return true if amplitudes or bit depth differ.
+     */
     bool operator!=(const AudioSample& other) const;
+
+    /**
+     * @brief Stream output operator for formatting AudioSample info.
+     * @param os Output stream.
+     * @param sample Sample instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const AudioSample& sample);
 
     /**
@@ -50,9 +68,28 @@ public:
      */
     double CalculatePowerRms() const;
 
+    /**
+     * @brief Gets left channel amplitude.
+     * @return Left channel value.
+     */
     double GetLeftChannel() const;
+
+    /**
+     * @brief Gets right channel amplitude.
+     * @return Right channel value.
+     */
     double GetRightChannel() const;
+
+    /**
+     * @brief Gets bit depth resolution.
+     * @return Bit depth integer (16, 24, 32).
+     */
     int GetBitDepth() const;
+
+    /**
+     * @brief Checks if sample experienced amplitude clipping.
+     * @return true if clipped.
+     */
     bool IsClipped() const;
 
 private:

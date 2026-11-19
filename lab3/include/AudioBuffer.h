@@ -23,8 +23,26 @@ public:
      */
     explicit AudioBuffer(size_t capacity_samples = 4096);
 
+    /**
+     * @brief Compares two AudioBuffer instances for equality.
+     * @param other Buffer to compare with.
+     * @return true if properties match.
+     */
     bool operator==(const AudioBuffer& other) const;
+
+    /**
+     * @brief Compares two AudioBuffer instances for inequality.
+     * @param other Buffer to compare with.
+     * @return true if properties differ.
+     */
     bool operator!=(const AudioBuffer& other) const;
+
+    /**
+     * @brief Stream output operator for formatting AudioBuffer info.
+     * @param os Output stream.
+     * @param buffer Buffer instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const AudioBuffer& buffer);
 
     /**
@@ -52,8 +70,22 @@ public:
      */
     double GetOccupancyPercentage() const;
 
+    /**
+     * @brief Gets maximum sample storage capacity.
+     * @return Capacity in samples.
+     */
     size_t GetCapacity() const;
+
+    /**
+     * @brief Gets current number of available readable samples.
+     * @return Sample count.
+     */
     size_t GetAvailableSamplesCount() const;
+
+    /**
+     * @brief Checks if buffer experienced an underrun condition.
+     * @return true if underrun occurred.
+     */
     bool IsUnderrun() const;
 
 private:

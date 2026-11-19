@@ -27,8 +27,26 @@ public:
      */
     AudioTrack(const std::string& file_path = "music/track.mp3", double duration_sec = 215.0, const AudioMetadata& metadata = AudioMetadata(), const AudioCodec& codec = AudioCodec());
 
+    /**
+     * @brief Compares two AudioTrack instances for equality.
+     * @param other Track to compare with.
+     * @return true if properties match.
+     */
     bool operator==(const AudioTrack& other) const;
+
+    /**
+     * @brief Compares two AudioTrack instances for inequality.
+     * @param other Track to compare with.
+     * @return true if properties differ.
+     */
     bool operator!=(const AudioTrack& other) const;
+
+    /**
+     * @brief Stream output operator for formatting AudioTrack info.
+     * @param os Output stream.
+     * @param track Track instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const AudioTrack& track);
 
     /**
@@ -53,11 +71,40 @@ public:
      */
     std::string FormatDurationString() const;
 
+    /**
+     * @brief Gets filesystem path to audio file.
+     * @return Reference to path string.
+     */
     const std::string& GetFilePath() const;
+
+    /**
+     * @brief Gets length of track in seconds.
+     * @return Duration in seconds.
+     */
     double GetDurationSec() const;
+
+    /**
+     * @brief Gets total play count for this track.
+     * @return Play count.
+     */
     int GetPlayCount() const;
+
+    /**
+     * @brief Checks if track is marked as favorite.
+     * @return true if favorite.
+     */
     bool IsFavorite() const;
+
+    /**
+     * @brief Gets descriptive metadata.
+     * @return Reference to AudioMetadata object.
+     */
     const AudioMetadata& GetMetadata() const;
+
+    /**
+     * @brief Gets audio encoding specifications.
+     * @return Reference to AudioCodec object.
+     */
     const AudioCodec& GetCodec() const;
 
 private:

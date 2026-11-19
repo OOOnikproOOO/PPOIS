@@ -22,8 +22,26 @@ public:
      */
     WAVDecoder(int audio_format_code = 1, int data_chunk_size_bytes = 0);
 
+    /**
+     * @brief Compares two WAVDecoder instances for equality.
+     * @param other Decoder to compare with.
+     * @return true if properties match.
+     */
     bool operator==(const WAVDecoder& other) const;
+
+    /**
+     * @brief Compares two WAVDecoder instances for inequality.
+     * @param other Decoder to compare with.
+     * @return true if properties differ.
+     */
     bool operator!=(const WAVDecoder& other) const;
+
+    /**
+     * @brief Stream output operator for formatting WAVDecoder info.
+     * @param os Output stream.
+     * @param decoder Decoder instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const WAVDecoder& decoder);
 
     /**
@@ -52,9 +70,28 @@ public:
      */
     void Reset();
 
+    /**
+     * @brief Checks if RIFF header format is valid.
+     * @return true if valid.
+     */
     bool IsRiffValid() const;
+
+    /**
+     * @brief Gets audio format code (1 = PCM).
+     * @return Format code integer.
+     */
     int GetAudioFormatCode() const;
+
+    /**
+     * @brief Gets data chunk size in bytes.
+     * @return Size in bytes.
+     */
     int GetDataChunkSizeBytes() const;
+
+    /**
+     * @brief Gets total number of PCM bytes read so far.
+     * @return Read bytes count.
+     */
     int GetBytesRead() const;
 
 private:

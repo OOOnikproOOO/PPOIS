@@ -26,8 +26,26 @@ public:
      */
     Artist(const std::string& name = "Unknown Artist", const std::string& country = "Unknown", int monthly_listeners = 0);
 
+    /**
+     * @brief Compares two Artist instances for equality.
+     * @param other Artist to compare with.
+     * @return true if properties and albums match.
+     */
     bool operator==(const Artist& other) const;
+
+    /**
+     * @brief Compares two Artist instances for inequality.
+     * @param other Artist to compare with.
+     * @return true if properties or albums differ.
+     */
     bool operator!=(const Artist& other) const;
+
+    /**
+     * @brief Stream output operator for formatting Artist info.
+     * @param os Output stream.
+     * @param artist Artist instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const Artist& artist);
 
     /**
@@ -55,9 +73,28 @@ public:
      */
     void UpdateMonthlyListeners(int delta);
 
+    /**
+     * @brief Gets artist name.
+     * @return Reference to name string.
+     */
     const std::string& GetName() const;
+
+    /**
+     * @brief Gets artist country of origin.
+     * @return Reference to country string.
+     */
     const std::string& GetCountry() const;
+
+    /**
+     * @brief Gets count of monthly listeners.
+     * @return Number of listeners.
+     */
     int GetMonthlyListeners() const;
+
+    /**
+     * @brief Gets discography albums list.
+     * @return Reference to vector of Album instances.
+     */
     const std::vector<Album>& GetAlbums() const;
 
 private:

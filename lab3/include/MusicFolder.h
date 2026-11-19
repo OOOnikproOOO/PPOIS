@@ -24,8 +24,26 @@ public:
      */
     MusicFolder(const std::string& folder_path = "C:/Users/Music", bool is_recursive = true);
 
+    /**
+     * @brief Compares two MusicFolder instances for equality.
+     * @param other Folder to compare with.
+     * @return true if paths and settings match.
+     */
     bool operator==(const MusicFolder& other) const;
+
+    /**
+     * @brief Compares two MusicFolder instances for inequality.
+     * @param other Folder to compare with.
+     * @return true if paths or settings differ.
+     */
     bool operator!=(const MusicFolder& other) const;
+
+    /**
+     * @brief Stream output operator for formatting MusicFolder info.
+     * @param os Output stream.
+     * @param folder Folder instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const MusicFolder& folder);
 
     /**
@@ -53,9 +71,28 @@ public:
      */
     void ClearScannedFiles();
 
+    /**
+     * @brief Gets filesystem directory path.
+     * @return Reference to folder path string.
+     */
     const std::string& GetFolderPath() const;
+
+    /**
+     * @brief Checks if folder scan includes subdirectories.
+     * @return true if recursive.
+     */
     bool IsRecursive() const;
+
+    /**
+     * @brief Gets allowed audio file extension filters.
+     * @return Reference to vector of extension strings.
+     */
     const std::vector<std::string>& GetAllowedExtensions() const;
+
+    /**
+     * @brief Gets list of discovered audio file paths.
+     * @return Reference to vector of discovered file paths.
+     */
     const std::vector<std::string>& GetDiscoveredFiles() const;
 
 private:

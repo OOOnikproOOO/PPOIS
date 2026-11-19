@@ -23,8 +23,26 @@ public:
      */
     FLACDecoder(int compression_level = 5, int block_size_samples = 4096);
 
+    /**
+     * @brief Compares two FLACDecoder instances for equality.
+     * @param other Decoder to compare with.
+     * @return true if parameters match.
+     */
     bool operator==(const FLACDecoder& other) const;
+
+    /**
+     * @brief Compares two FLACDecoder instances for inequality.
+     * @param other Decoder to compare with.
+     * @return true if parameters differ.
+     */
     bool operator!=(const FLACDecoder& other) const;
+
+    /**
+     * @brief Stream output operator for formatting FLACDecoder info.
+     * @param os Output stream.
+     * @param decoder Decoder instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const FLACDecoder& decoder);
 
     /**
@@ -55,9 +73,28 @@ public:
      */
     double CalculateCompressionRatio(size_t raw_size, size_t compressed_size) const;
 
+    /**
+     * @brief Gets FLAC compression level (0 to 8).
+     * @return Compression level integer.
+     */
     int GetCompressionLevel() const;
+
+    /**
+     * @brief Gets block size in audio samples.
+     * @return Block size in samples.
+     */
     int GetBlockSizeSamples() const;
+
+    /**
+     * @brief Gets total count of decoded blocks.
+     * @return Decoded blocks count.
+     */
     int GetDecodedBlocksCount() const;
+
+    /**
+     * @brief Checks if stream MD5 checksum has been verified.
+     * @return true if verified successfully.
+     */
     bool IsMd5Verified() const;
 
 private:

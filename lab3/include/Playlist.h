@@ -26,8 +26,26 @@ public:
      */
     Playlist(const std::string& name = "My Playlist", bool is_public = true, size_t max_capacity = 1000);
 
+    /**
+     * @brief Compares two Playlist instances for equality.
+     * @param other Playlist to compare with.
+     * @return true if properties and tracks match.
+     */
     bool operator==(const Playlist& other) const;
+
+    /**
+     * @brief Compares two Playlist instances for inequality.
+     * @param other Playlist to compare with.
+     * @return true if properties or tracks differ.
+     */
     bool operator!=(const Playlist& other) const;
+
+    /**
+     * @brief Stream output operator for formatting Playlist info.
+     * @param os Output stream.
+     * @param playlist Playlist instance to display.
+     * @return Reference to the output stream.
+     */
     friend std::ostream& operator<<(std::ostream& os, const Playlist& playlist);
 
     /**
@@ -63,10 +81,34 @@ public:
      */
     void Clear();
 
+    /**
+     * @brief Gets playlist title name.
+     * @return Reference to name string.
+     */
     const std::string& GetName() const;
+
+    /**
+     * @brief Checks if playlist is public.
+     * @return true if public.
+     */
     bool IsPublic() const;
+
+    /**
+     * @brief Gets maximum playlist capacity limit.
+     * @return Capacity count.
+     */
     size_t GetMaxCapacity() const;
+
+    /**
+     * @brief Gets constant reference to tracklist vector.
+     * @return Reference to vector of AudioTrack.
+     */
     const std::vector<AudioTrack>& GetTracks() const;
+
+    /**
+     * @brief Gets count of tracks currently in playlist.
+     * @return Number of tracks.
+     */
     size_t GetTracksCount() const;
 
 private:
