@@ -3,9 +3,15 @@ name: CI Lab 3
 on:
   push:
     branches: [ main, master, feature-lab3 ]
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/lab3_ci.yml'
     tags: [ 'v3*' ]
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/lab3_ci.yml'
 
 permissions:
   contents: write
@@ -58,7 +64,7 @@ jobs:
     name: Build Windows release and publish
     runs-on: windows-latest
     needs: quality
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v3'))
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v3')
 
     steps:
       - name: Checkout repository
@@ -103,7 +109,7 @@ jobs:
         with:
           files: lab3-windows.zip
           generate_release_notes: true
-          tag_name: v1.0-lab3
+          tag_name: v3.0-lab3
           name: "Lab 3 — Music Player"
           body: |
             Автоматический релиз лабораторной работы №3.
