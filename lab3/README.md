@@ -9,13 +9,13 @@
 ## 1. Описание предметной области
 
 Проект моделирует архитектуру современного кроссплатформенного музыкального проигрывателя:
-- **Аудиоформаты, кодеки и декодеры:** структуры сэмплов (AudioSample), циклический буфер (AudioBuffer), спецификации кодеков (AudioCodec), декодеры форматов (MP3Decoder, FLACDecoder, WAVDecoder), потоковые источники (AudioStream).
-- **Музыкальный контент и медиатека:** метаданные (AudioMetadata), аудиодорожки (AudioTrack), альбомы (Album), исполнители (Artist), пользовательские плейлисты (Playlist), умные плейлисты (SmartPlaylist), папки локального сканирования (MusicFolder), центральная медиатека (MusicLibrary).
-- **Звуковая обработка и эффекты:** полосы частот (EqualizerBand), параметрический эквалайзер (GraphicEqualizer), регулятор громкости (VolumeControl), движок плавного перехода (CrossfadeEngine), эффекты реверберации (ReverbEffect), усиления баса (BassBoostEffect), коррекции тональности (PitchShifter), общая стойка эффектов (AudioEffectsRack).
-- **Управление воспроизведением и очередь:** очередь воспроизведения (PlaybackQueue), алгоритм перемешивания (ShuffleEngine), контроллер повтора (RepeatController), системный движок вывода (AudioEngine), история прослушиваний (PlaybackHistory), закладки времени (Bookmark), контроллер позиции (PlaybackPosition).
-- **Тексты песен, теги и визуализация:** строки синхронизированного текста (LyricLine), окно отображения караоке (LyricsViewer), анализатор спектра (SpectrumAnalyzer), визуализатор звуковых волн (AudioVisualizer), обложки альбомов (AlbumArt), редактор тегов (ID3TagEditor), акустический отпечаток (AudioFingerprint).
-- **Стриминг, устройства и пользователи:** интернет-радиостанции (OnlineRadioStation), кэширующий загрузчик (StreamDownloader), аудиоустройства (AudioOutputDevice), диспетчер устройств (DeviceManager), профиль пользователя (UserProfile), тарифная подписка (SubscriptionPlan), таймер сна (SleepTimer), статистика прослушиваний (PlaybackStatistics).
-- **Подкасты, расширения и интеграция:** эпизоды подкастов (PodcastEpisode), шоу подкастов (PodcastShow), запись звука (AudioRecorder), менеджер расширений (PluginManager), комплексный музыкальный проигрыватель (MusicPlayer).
+- **Аудиоформаты, кодеки и декодеры:** структуры сэмплов (`AudioSample`), циклический аудиобуфер (`AudioBuffer`), спецификации кодеков (`AudioCodec`), декодеры форматов (`MP3Decoder`, `FLACDecoder`, `WAVDecoder`), потоковые источники (`AudioStream`).
+- **Музыкальный контент и медиатека:** метаданные (`AudioMetadata`), аудиодорожки (`AudioTrack`), альбомы (`Album`), исполнители (`Artist`), пользовательские плейлисты (`Playlist`), умные плейлисты (`SmartPlaylist`), папки локального сканирования (`MusicFolder`), центральная медиатека (`MusicLibrary`).
+- **Звуковая обработка и эффекты:** полосы частот (`EqualizerBand`), параметрический эквалайзер (`GraphicEqualizer`), регулятор громкости (`VolumeControl`), движок плавного перехода (`CrossfadeEngine`), эффекты реверберации (`ReverbEffect`), усиления баса (`BassBoostEffect`), коррекции тональности (`PitchShifter`), общая стойка эффектов (`AudioEffectsRack`).
+- **Управление воспроизведением и очередь:** очередь воспроизведения (`PlaybackQueue`), алгоритм перемешивания (`ShuffleEngine`), контроллер повтора (`RepeatController`), системный движок вывода (`AudioEngine`), история прослушиваний (`PlaybackHistory`), закладки времени (`Bookmark`), контроллер позиции (`PlaybackPosition`).
+- **Тексты песен, теги и визуализация:** строки синхронизированного текста (`LyricLine`), окно отображения караоке (`LyricsViewer`), анализатор спектра (`SpectrumAnalyzer`), визуализатор звуковых волн (`AudioVisualizer`), обложки альбомов (`AlbumArt`), редактор тегов (`ID3TagEditor`), акустический отпечаток (`AudioFingerprint`).
+- **Стриминг, устройства и пользователи:** интернет-радиостанции (`OnlineRadioStation`), кэширующий загрузчик (`StreamDownloader`), аудиоустройства (`AudioOutputDevice`), диспетчер устройств (`DeviceManager`), профиль пользователя (`UserProfile`), тарифная подписка (`SubscriptionPlan`), таймер сна (`SleepTimer`), статистика прослушиваний (`PlaybackStatistics`).
+- **Подкасты, расширения и интеграция:** эпизоды подкастов (`PodcastEpisode`), шоу подкастов (`PodcastShow`), запись звука (`AudioRecorder`), менеджер расширений (`PluginManager`), музыкальный проигрыватель (`MusicPlayer`).
 
 ---
 
@@ -23,19 +23,19 @@
 
 ```text
 lab3/
-├── include/                     # Заголовочные файлы классов (.h)
-│   ├── MusicPlayerException.h         # Базовое исключение домена
-│   ├── TrackNotFoundException.h       # Исключение: трек не найден
-│   ├── PlaylistNotFoundException.h    # Исключение: плейлист не найден
-│   ├── CorruptedAudioFileException.h  # Исключение: повреждённый аудиофайл
-│   ├── UnsupportedAudioFormatException.h # Исключение: неподдерживаемый формат
-│   ├── DeviceAudioOutputException.h   # Исключение: сбой устройства вывода
-│   ├── PlaybackBufferUnderflowException.h # Исключение: опустошение аудиобуфера
-│   ├── InvalidEqualizerBandException.h# Исключение: некорректная полоса эквалайзера
-│   ├── PlaylistFullException.h        # Исключение: переполнение плейлиста
-│   ├── UnauthorizedPlaybackException.h# Исключение: отказ в доступе / нет подписки
-│   ├── StreamingNetworkException.h    # Исключение: сетевая ошибка стриминга
-│   ├── LicenseExpiredException.h      # Исключение: истечение лицензии DRM
+├── include/                   # Объявление классов (.h)
+│   ├── MusicPlayerException.h				# Базовое исключение домена
+│   ├── TrackNotFoundException.h			# Исключение: трек не найден
+│   ├── PlaylistNotFoundException.h			# Исключение: плейлист не найден
+│   ├── CorruptedAudioFileException.h		# Исключение: повреждённый аудиофайл
+│   ├── UnsupportedAudioFormatException.h	# Исключение: неподдерживаемый формат
+│   ├── DeviceAudioOutputException.h		# Исключение: сбой устройства вывода
+│   ├── PlaybackBufferUnderflowException.h	# Исключение: опустошение аудиобуфера
+│   ├── InvalidEqualizerBandException.h		# Исключение: некорректная полоса эквалайзера
+│   ├── PlaylistFullException.h				# Исключение: переполнение плейлиста
+│   ├── UnauthorizedPlaybackException.h		# Исключение: отказ в доступе / нет подписки
+│   ├── StreamingNetworkException.h			# Исключение: сетевая ошибка стриминга
+│   ├── LicenseExpiredException.h			# Исключение: истечение лицензии
 │   ├── AudioMetadata.h          # Метаданные трека
 │   ├── AudioSample.h            # Стереосэмпл звука
 │   ├── AudioBuffer.h            # Циклический аудиобуфер
@@ -44,7 +44,7 @@ lab3/
 │   ├── FLACDecoder.h            # Декодер FLAC блоков
 │   ├── WAVDecoder.h             # Декодер PCM WAV RIFF
 │   ├── AudioStream.h            # Потоковый аудиоисточник
-│   ├── AudioTrack.h             # Аудиодорожка / трек
+│   ├── AudioTrack.h             # Трек (аудиодорожка)
 │   ├── Album.h                  # Музыкальный альбом
 │   ├── Artist.h                 # Исполнитель
 │   ├── Playlist.h               # Пользовательский плейлист
@@ -57,7 +57,7 @@ lab3/
 │   ├── CrossfadeEngine.h        # Плавный переход между треками
 │   ├── ReverbEffect.h           # Эффект реверберации
 │   ├── BassBoostEffect.h        # Эффект усиления баса
-│   ├── PitchShifter.h           # Модулятор высоты тона
+│   ├── PitchShifter.h           # Регулятор тональности звука
 │   ├── AudioEffectsRack.h       # Стойка аудиоэффектов
 │   ├── PlaybackQueue.h          # Очередь воспроизведения
 │   ├── ShuffleEngine.h          # Алгоритм перемешивания
@@ -65,14 +65,147 @@ lab3/
 │   ├── AudioEngine.h            # Движок рендеринга звука
 │   ├── PlaybackHistory.h        # История прослушиваний
 │   ├── Bookmark.h               # Временная закладка
-│   └── PlaybackPosition.h       # Текущая позиция воспроизведения
-├── src/                         # Реализация методов (.cpp)
-├── app/                         # Консольный интерфейс пользователя (CLI)
+│   ├── PlaybackPosition.h       # Текущая позиция воспроизведения
+│   ├── LyricLine.h              # Строка синхронизированного текста
+│   ├── LyricsViewer.h           # Компонент отображения текста и караоке
+│   ├── SpectrumAnalyzer.h       # Анализатор частотного спектра
+│   ├── AudioVisualizer.h        # Визуализатор звуковых волн
+│   ├── AlbumArt.h               # Обложка альбома (.jpeg, .png)
+│   ├── ID3TagEditor.h           # Редактор ID3-тегов треков
+│   ├── AudioFingerprint.h       # Акустический отпечаток трека
+│   ├── OnlineRadioStation.h     # Интернет-радиостанция
+│   ├── StreamDownloader.h       # Загрузчик и кэшировщик потоков
+│   ├── AudioOutputDevice.h      # Физическое или виртуальное аудиоустройство
+│   ├── DeviceManager.h          # Менеджер устройств вывода
+│   ├── UserProfile.h            # Профиль пользователя
+│   ├── SubscriptionPlan.h       # Тарифный план и подписка
+│   ├── SleepTimer.h             # Таймер автоматического выключения
+│   ├── PlaybackStatistics.h     # Статистика и аналитика прослушиваний
+│   ├── PodcastEpisode.h         # Эпизод подкаста
+│   ├── PodcastShow.h            # Каталог подкаст-шоу
+│   ├── AudioRecorder.h          # Компонент захвата и записи звука
+│   ├── PluginManager.h          # Менеджер подключаемых расширений
+│   └── MusicPlayer.h            # Музыкальный проигрыватель
+├── src/                     # Реализация классов (.cpp)
+│   ├── Album.cpp
+│   ├── AlbumArt.cpp
+│   ├── Artist.cpp
+│   ├── AudioBuffer.cpp
+│   ├── AudioCodec.cpp
+│   ├── AudioEffectsRack.cpp
+│   ├── AudioEngine.cpp
+│   ├── AudioFingerprint.cpp
+│   ├── AudioMetadata.cpp
+│   ├── AudioOutputDevice.cpp
+│   ├── AudioRecorder.cpp
+│   ├── AudioSample.cpp
+│   ├── AudioStream.cpp
+│   ├── AudioTrack.cpp
+│   ├── AudioVisualizer.cpp
+│   ├── BassBoostEffect.cpp
+│   ├── Bookmark.cpp
+│   ├── CorruptedAudioFileException.cpp
+│   ├── CrossfadeEngine.cpp
+│   ├── DeviceAudioOutputException.cpp
+│   ├── DeviceManager.cpp
+│   ├── EqualizerBand.cpp
+│   ├── FLACDecoder.cpp
+│   ├── GraphicEqualizer.cpp
+│   ├── ID3TagEditor.cpp
+│   ├── InvalidEqualizerBandException.cpp
+│   ├── LicenseExpiredException.cpp
+│   ├── LyricLine.cpp
+│   ├── LyricsViewer.cpp
+│   ├── MP3Decoder.cpp
+│   ├── MusicFolder.cpp
+│   ├── MusicLibrary.cpp
+│   ├── MusicPlayer.cpp
+│   ├── MusicPlayerException.cpp
+│   ├── OnlineRadioStation.cpp
+│   ├── PitchShifter.cpp
+│   ├── PlaybackBufferUnderflowException.cpp
+│   ├── PlaybackHistory.cpp
+│   ├── PlaybackPosition.cpp
+│   ├── PlaybackQueue.cpp
+│   ├── PlaybackStatistics.cpp
+│   ├── Playlist.cpp
+│   ├── PlaylistFullException.cpp
+│   ├── PlaylistNotFoundException.cpp
+│   ├── PluginManager.cpp
+│   ├── PodcastEpisode.cpp
+│   ├── PodcastShow.cpp
+│   ├── RepeatController.cpp
+│   ├── ReverbEffect.cpp
+│   ├── ShuffleEngine.cpp
+│   ├── SleepTimer.cpp
+│   ├── SmartPlaylist.cpp
+│   ├── SpectrumAnalyzer.cpp
+│   ├── StreamDownloader.cpp
+│   ├── StreamingNetworkException.cpp
+│   ├── SubscriptionPlan.cpp
+│   ├── TrackNotFoundException.cpp
+│   ├── UnauthorizedPlaybackException.cpp
+│   ├── UnsupportedAudioFormatException.cpp
+│   ├── UserProfile.cpp
+│   ├── VolumeControl.cpp
+│   └── WAVDecoder.cpp
+├── app/                     # Консольный интерфейс пользователя (CLI)
 │   └── main.cpp
-├── tests/                       # Unit-тесты GoogleTest
-├── CMakeLists.txt               # Сборка проекта через CMake
-├── Doxyfile                     # Конфигурация документации Doxygen
-└── README.md                    # Документация проекта
+├── tests/                   # Unit-тесты (GoogleTest)
+│   ├── test_album.cpp
+│   ├── test_album_art.cpp
+│   ├── test_artist.cpp
+│   ├── test_audio_buffer.cpp
+│   ├── test_audio_codec.cpp
+│   ├── test_audio_effects_rack.cpp
+│   ├── test_audio_engine.cpp
+│   ├── test_audio_fingerprint.cpp
+│   ├── test_audio_metadata.cpp
+│   ├── test_audio_output_device.cpp
+│   ├── test_audio_recorder.cpp
+│   ├── test_audio_sample.cpp
+│   ├── test_audio_stream.cpp
+│   ├── test_audio_track.cpp
+│   ├── test_audio_visualizer.cpp
+│   ├── test_bass_boost_effect.cpp
+│   ├── test_bookmark.cpp
+│   ├── test_crossfade_engine.cpp
+│   ├── test_device_manager.cpp
+│   ├── test_equalizer_band.cpp
+│   ├── test_exceptions.cpp
+│   ├── test_flac_decoder.cpp
+│   ├── test_graphic_equalizer.cpp
+│   ├── test_id3_tag_editor.cpp
+│   ├── test_lyric_line.cpp
+│   ├── test_lyrics_viewer.cpp
+│   ├── test_mp3_decoder.cpp
+│   ├── test_music_folder.cpp
+│   ├── test_music_library.cpp
+│   ├── test_music_player.cpp
+│   ├── test_online_radio_station.cpp
+│   ├── test_pitch_shifter.cpp
+│   ├── test_playback_history.cpp
+│   ├── test_playback_position.cpp
+│   ├── test_playback_queue.cpp
+│   ├── test_playback_statistics.cpp
+│   ├── test_playlist.cpp
+│   ├── test_plugin_manager.cpp
+│   ├── test_podcast_episode.cpp
+│   ├── test_podcast_show.cpp
+│   ├── test_repeat_controller.cpp
+│   ├── test_reverb_effect.cpp
+│   ├── test_shuffle_engine.cpp
+│   ├── test_sleep_timer.cpp
+│   ├── test_smart_playlist.cpp
+│   ├── test_spectrum_analyzer.cpp
+│   ├── test_stream_downloader.cpp
+│   ├── test_subscription_plan.cpp
+│   ├── test_user_profile.cpp
+│   ├── test_volume_control.cpp
+│   └── test_wav_decoder.cpp
+├── CMakeLists.txt           # Сборка проекта через CMake
+├── Doxyfile                 # Конфигурация документации Doxygen
+└── README.md                # Документация проекта
 ```
 
 ---
@@ -112,6 +245,26 @@ lab3/
 | 28 | PlaybackHistory | 3 | 6 | AudioTrack |
 | 29 | Bookmark | 4 | 4 | — |
 | 30 | PlaybackPosition | 4 | 6 | — |
+| 31 | LyricLine | 3 | 7 | — |
+| 32 | LyricsViewer | 3 | 9 | LyricLine |
+| 33 | SpectrumAnalyzer | 4 | 9 | AudioBuffer |
+| 34 | AudioVisualizer | 4 | 9 | AudioSample |
+| 35 | AlbumArt | 4 | 8 | — |
+| 36 | ID3TagEditor | 4 | 8 | AudioTrack |
+| 37 | AudioFingerprint | 4 | 8 | AudioBuffer |
+| 38 | OnlineRadioStation | 5 | 9 | — |
+| 39 | StreamDownloader | 5 | 9 | — |
+| 40 | AudioOutputDevice | 5 | 9 | — |
+| 41 | DeviceManager | 3 | 9 | AudioOutputDevice |
+| 42 | UserProfile | 4 | 9 | — |
+| 43 | SubscriptionPlan | 4 | 6 | — |
+| 44 | SleepTimer | 5 | 8 | — |
+| 45 | PlaybackStatistics | 4 | 8 | — |
+| 46 | PodcastEpisode | 5 | 8 | — |
+| 47 | PodcastShow | 4 | 8 | PodcastEpisode |
+| 48 | AudioRecorder | 4 | 8 | AudioBuffer |
+| 49 | PluginManager | 3 | 8 | — |
+| 50 | MusicPlayer | 15 | 25 | MusicLibrary, PlaybackQueue, AudioEngine, AudioEffectsRack, VolumeControl, PlaybackPosition, RepeatController, ShuffleEngine, PlaybackHistory, DeviceManager, UserProfile, SubscriptionPlan, SleepTimer |
 
 ---
 
@@ -136,9 +289,9 @@ lab3/
 
 | Показатель | Значение |
 |---|---|
-| Поля | 125 |
-| Поведения | 134 |
-| Ассоциации | 20 |
+| Поля | 217 |
+| Поведения | 342 |
+| Ассоциации | 38 |
 | Исключения | 12 |
 
 ---
