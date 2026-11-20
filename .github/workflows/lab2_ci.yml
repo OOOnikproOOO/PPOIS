@@ -3,9 +3,15 @@ name: CI Lab 2
 on:
   push:
     branches: [ main, master, feature-lab2 ]
-    tags: [ 'v*' ]
+    paths:
+      - 'lab2/**'
+      - '.github/workflows/lab2_ci.yml'
+    tags: [ 'v2*' ]
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'lab2/**'
+      - '.github/workflows/lab2_ci.yml'
 
 permissions:
   contents: write
@@ -58,7 +64,7 @@ jobs:
     name: Build Windows release and publish
     runs-on: windows-latest
     needs: quality
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v2'))
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v2')
 
     steps:
       - name: Checkout repository
@@ -103,7 +109,7 @@ jobs:
         with:
           files: lab2-windows.zip
           generate_release_notes: true
-          tag_name: v1.0-lab2
+          tag_name: v2.0-lab2
           name: "Lab 2 — Computer"
           body: |
             Автоматический релиз лабораторной работы №2.
